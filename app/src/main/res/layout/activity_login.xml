@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/ic_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/loginBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="70dp"
+        android:layout_marginRight="70dp"
+        android:background="@drawable/login_block"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/userNo"
+            style="@style/LoginEditStyle"
+            android:drawableLeft="@mipmap/ic_userno"
+            android:hint="@string/userNo"
+            android:inputType="number" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/line" />
+
+        <EditText
+            android:id="@+id/userName"
+            style="@style/LoginEditStyle"
+            android:drawableLeft="@mipmap/ic_username"
+            android:hint="@string/userName"
+            android:inputType="textVisiblePassword" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/line" />
+
+        <EditText
+            android:id="@+id/userPsw"
+            style="@style/LoginEditStyle"
+            android:drawableLeft="@mipmap/ic_userpsw"
+            android:hint="@string/userPsw"
+            android:inputType="textPassword" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginBlock"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buttonLogin"
+            style="@style/LoginButtonStyle"
+            android:layout_below="@id/loginBlock"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="10dp"
+            android:text="@string/buttonLogin" />
+
+        <Button
+            android:id="@+id/buttonClose"
+            style="@style/LoginButtonStyle"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="70dp"
+            android:text="@string/buttonClose" />
+    </LinearLayout>
+
+</RelativeLayout>

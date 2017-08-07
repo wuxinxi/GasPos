@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.szxb">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_logo"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".module.login.LoginActivity"
+            android:screenOrientation="reverseLandscape"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".module.home.HomeActivity"
+            android:screenOrientation="reverseLandscape" />
+
+        <activity
+            android:name=".module.psw.VerifyActivity"
+            android:screenOrientation="reverseLandscape" />
+
+
+        <activity
+            android:name=".module.bill.BillActivity"
+            android:screenOrientation="reverseLandscape" />
+
+        <activity
+            android:name=".module.order.OrderActivity"
+            android:screenOrientation="reverseLandscape" />
+
+        <activity
+            android:name=".module.member.MemberActivity"
+            android:screenOrientation="reverseLandscape" />
+
+        <activity
+            android:name=".module.setting.SettingsActivity"
+            android:screenOrientation="reverseLandscape" />
+
+        <service android:name=".task.TaskRotationService" />
+    </application>
+
+</manifest>

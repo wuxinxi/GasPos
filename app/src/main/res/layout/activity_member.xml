@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <include layout="@layout/numkeyboard_view" />
+
+        <LinearLayout
+            android:id="@+id/loginBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/login_block"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/userName"
+                style="@style/LoginEditStyle"
+                android:drawableLeft="@mipmap/ic_username"
+                android:drawableRight="@mipmap/hline"
+                android:gravity="center|left"
+                android:hint="@string/userPhone" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/line" />
+
+            <TextView
+                android:id="@+id/userPsw"
+                style="@style/LoginEditStyle"
+                android:drawableLeft="@mipmap/ic_userpsw"
+                android:gravity="center|left"
+                android:hint="@string/userPsw"
+                android:password="true" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

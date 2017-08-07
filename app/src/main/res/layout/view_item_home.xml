@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_block"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/gasNo"
+                style="@style/HomeItemText"
+                android:text="@string/gasNo" />
+
+            <TextView
+                android:id="@+id/gasCapacity"
+                style="@style/HomeItemText"
+                android:text="@string/gasCapacity" />
+
+            <TextView
+                android:id="@+id/gasMoney"
+                style="@style/HomeItemText"
+                android:text="@string/gasMoney" />
+
+            <TextView
+                android:id="@+id/gasMemberMoney"
+                style="@style/HomeItemText"
+                android:text="@string/gasMemberMoney" />
+
+            <TextView
+                android:id="@+id/gasPayStatus"
+                style="@style/HomeItemText"
+                android:text="@string/gasPayStatus" />
+        </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,111 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@mipmap/ic_bg</item>
+    </style>
+
+
+    <!--主页TextView Style-->
+    <style name="HomeItemText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/colorBlack</item>
+    </style>
+
+    <!--主页TextView title style-->
+    <style name="HomeItemTitleText" parent="HomeItemText">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!--下单页面TextView style-->
+    <style name="PayLayoutText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:layout_marginTop">7dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="PayLayoutTextRight" parent="PayLayoutText">
+        <item name="android:layout_marginRight">15dp</item>
+    </style>
+
+    <style name="PayLayoutTextLeft" parent="PayLayoutText">
+        <item name="android:layout_marginLeft">15dp</item>
+    </style>
+
+    <style name="SettingEditStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:lines">1</item>
+        <item name="android:maxLength">16</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColorHint">@color/colorWhite</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LoginEditStyle" parent="SettingEditStyle">
+        <item name="android:textColorHint">@color/color_num</item>
+    </style>
+
+    <style name="LoginButtonStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="KeynumStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/num_selector</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="tabTextSize">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="SetTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@drawable/ic_set_selector</item>
+        <item name="android:clickable">true</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="SetTextStyleTop" parent="SetTextStyle">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+    </style>
+
+    <style name="LintStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@drawable/line</item>
+    </style>
+
+
+</resources>

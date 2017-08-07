@@ -1,0 +1,4 @@
+1.CommonSharedPreferences
+      Key-名称
+      mchId :商户号
+      mchPsw :登录密码
