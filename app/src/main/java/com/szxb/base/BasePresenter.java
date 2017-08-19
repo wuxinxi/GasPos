@@ -1,11 +1,11 @@
 package com.szxb.base;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.szxb.utils.Config;
-import com.yanzhenjie.nohttp.Logger;
 import com.yanzhenjie.nohttp.RequestMethod;
 import com.yanzhenjie.nohttp.rest.CacheMode;
 import com.yanzhenjie.nohttp.rest.Response;
@@ -70,7 +70,8 @@ public abstract class BasePresenter {
         CallServer.getHttpclient().add(what, request, new HttpListener<JSONObject>() {
             @Override
             public void success(int what, Response<JSONObject> response) {
-                Logger.d(response.get().toString());
+                Log.d("BasePresenter",
+                    "success(BasePresenter.java:75)"+response.get().toJSONString());
                 if (response.get() != null) {
                     if (what == Config.LOOP_WHAT) {//轮训任务
                         JSONArray array = response.get().getJSONArray("varList");
@@ -100,7 +101,8 @@ public abstract class BasePresenter {
 
     public void cancelTimerTask() {
         if (timer != null) {
-            Logger.d("TimerTask stop ……");
+            Log.d("BasePresenter",
+                "cancelTimerTask(BasePresenter.java:105)TimerTask stop ……");
             timer.cancel();
             request.cancelBySign(Config.LOOP_WHAT);
         }

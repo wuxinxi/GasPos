@@ -3,10 +3,8 @@ package com.szxb.module.home;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
@@ -21,8 +19,9 @@ import com.szxb.interfaces.OnItemClick;
 import com.szxb.module.bill.BillActivity;
 import com.szxb.module.setting.SettingsActivity;
 import com.szxb.task.TaskRotationService;
-import com.szxb.utils.router.Router;
 import com.szxb.utils.rx.RxBus;
+import com.szxb.utils.tip.Tip;
+import com.szxb.xblog.XBLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +47,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
 
     Intent intent;
     Subscription sub;
+    Subscription subscription;
     @BindView(R.id.queryRecord)
     Button queryRecord;
     @BindView(R.id.setting)
@@ -63,9 +63,9 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
     Button checkBack;
 
     @BindView(R.id.currentCheckView)
-    View currentCheckView;
+    Button currentCheckView;
     @BindView(R.id.checkBackView)
-    View checkBackView;
+    Button checkBackView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
@@ -75,9 +75,13 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
 
     private int selectPosition = 0;
 
+    private int mCurrentPosition = -1;
+
+    //Activity的状态，是否在前台
     private boolean isVisible = true;
 
     private HomeInfoEntity infoEntity = null;
+
 
     @Override
     protected int layoutID() {
@@ -96,10 +100,13 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
         recyclerView.setAdapter(mAdapter);
 
         mAdapter.setItemClick(this);
+        query(5);
+
     }
 
     @Override
     protected void initData() {
+
         sub = RxBus.getInstance().toObservable(HomeInfoEntity.class)
                 .filter(new Func1<HomeInfoEntity, Boolean>() {
                     @Override
@@ -127,6 +134,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
                         //当前选择为实时时方可实时更新UI
                         mAdapter.setItemChecked(-1);
                         infoEntity = null;
+                        //如果选择的是实时记录并且当前Activity在前台显示则更新UI
                         if (selectPosition == 0 && isVisible) {
                             infoEntitiesList.clear();
                             infoEntitiesList.addAll(0, infoEntities);
@@ -134,6 +142,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
                         }
                     }
                 });
+
     }
 
 
@@ -152,21 +161,28 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
             case R.id.setting:
                 ARouter.getInstance()
                         .build("/gas/verify")
-                        .greenChannel()
                         .withString("activity", SettingsActivity.class.getSimpleName())
                         .withTransition(R.anim.base_slide_right_in, R.anim.base_slide_remain)
                         .navigation();
                 break;
             case R.id.scanNoMember:
-                if (infoEntity == null) Toast.makeText(this, "选择无效", Toast.LENGTH_SHORT).show();
+                if (infoEntity == null)
+                    Tip.show(getApplicationContext(), getResources().getString(R.string.chose_tip), false);
                 else {
-                    Router.jumpL("/gas/order");
+                    ARouter.getInstance().build("/gas/order")
+                            .withBoolean("status", false)
+                            .withParcelable("infoEntity", infoEntity)
+                            .navigation(this, 0x11);
                 }
                 break;
             case R.id.scanMember:
-                if (infoEntity == null) Toast.makeText(this, "选择无效", Toast.LENGTH_SHORT).show();
+                if (infoEntity == null)
+                    Tip.show(getApplicationContext(), getResources().getString(R.string.chose_tip), false);
                 else {
-                    Router.jumpL("/gas/member");
+                    ARouter.getInstance().build("/gas/member")
+                            .withBoolean("status", true)
+                            .withParcelable("infoEntity", infoEntity)
+                            .navigation(this, 0x11);
                 }
                 break;
             case R.id.currentCheck:
@@ -180,7 +196,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
             case R.id.queryRecord:
                 ARouter.getInstance()
                         .build("/gas/verify")
-                        .greenChannel()
                         .withString("activity", BillActivity.class.getSimpleName())
                         .withTransition(R.anim.base_slide_right_in, R.anim.base_slide_remain)
                         .navigation();
@@ -218,8 +233,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Log.d("HomeActivity",
-                                "call(HomeActivity.java:183)" + throwable.getMessage());
+                        XBLog.d("call(HomeActivity.java:228)" + throwable.getMessage());
                     }
                 });
     }
@@ -247,8 +261,26 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
 
     @Override
     public void onItemClick(View view, int position) {
+        if (position == mCurrentPosition) {
+            return;
+        }
+        mCurrentPosition = position;
         mAdapter.setItemChecked(position);
         infoEntity = infoEntitiesList.get(position);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 0x11:
+                selectPosition(0);
+                query(5);
+                break;
+            default:
+                break;
+        }
     }
 
 
@@ -256,8 +288,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
     protected void onPause() {
         super.onPause();
         isVisible = false;
-        Log.d("HomeActivity",
-                "onPause(HomeActivity.java:239)停止更新主界面UI");
     }
 
     @Override
@@ -270,12 +300,10 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
     protected void onDestroy() {
         super.onDestroy();
         if (intent != null) {
-            Log.d("HomeActivity",
-                    "onDestroy(HomeActivity.java:274)暂停服务");
             stopService(intent);
         }
 
-        if (!sub.isUnsubscribed()) {
+        if (!sub.isUnsubscribed()&&!sub.isUnsubscribed()) {
             sub.unsubscribe();
         }
     }

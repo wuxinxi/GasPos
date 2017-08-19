@@ -1,12 +1,6 @@
 package com.szxb;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.szxb.crash.Cockroach;
 import com.szxb.db.manager.DBCore;
 import com.szxb.utils.AppUtil;
 import com.szxb.xblog.AndroidLogAdapter;
@@ -52,27 +46,31 @@ public class App extends LibApp {
         ARouter.init(this);
 
         AppUtil.syncISDebug(this);
-        if (AppUtil.isDebug()) {
-            //日志操作
-            initLog();
-        }
+//        if (AppUtil.isDebug()) {
+//            //日志操作
+//            initLog();
+//        }
 
-        Cockroach.install(new Cockroach.ExceptionHandler() {
-            @Override
-            public void handlerException(final Thread thread, final Throwable throwable) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Log.e("AndroidRuntime", "--->CockroachException:" + thread + "<---", throwable);
-                            Toast.makeText(App.this, "Exception Happend\n" + thread + "\n" + throwable.toString(), Toast.LENGTH_SHORT).show();
-                        } catch (Throwable e) {
-
-                        }
-                    }
-                });
-            }
-        });
+        initLog(true);
+//
+//        Cockroach.install(new Cockroach.ExceptionHandler() {
+//            @Override
+//            public void handlerException(final Thread thread, final Throwable throwable) {
+//                new Handler(Looper.getMainLooper()).post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            XBLog.d("run(App.java:70)" + "--->CockroachException:" + thread + "<---", throwable.getMessage());
+//                            Log.d("App",
+//                                    "run(App.java:70)" + throwable.getMessage());
+//                            Tip.show(App.this, "Exception Happend\n" + thread + "\n" + throwable.toString(), false);
+//                        } catch (Throwable e) {
+//
+//                        }
+//                    }
+//                });
+//            }
+//        });
     }
 
     private void initLog() {

@@ -1,1 +1,1 @@
-include ':app', ':poslibrary', ':xblog'
+include ':app', ':poslibrary', ':xblog', ':m680'

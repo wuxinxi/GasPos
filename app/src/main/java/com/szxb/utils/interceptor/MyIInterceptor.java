@@ -15,13 +15,17 @@ import com.alibaba.android.arouter.facade.template.IInterceptor;
  */
 @Interceptor(priority = 100, name = "verify")
 public class MyIInterceptor implements IInterceptor {
+
     @Override
-    public void process(Postcard postcard, InterceptorCallback callback) {
+    public void process(final Postcard postcard, final InterceptorCallback callback) {
+
         callback.onContinue(postcard);
+
     }
 
     @Override
     public void init(Context context) {
 
     }
+
 }

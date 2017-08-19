@@ -29,15 +29,17 @@ public class TransactionPresenter extends BasePresenter {
         if (activity != null) {
             if (what == Config.LOOP_WHAT) {
                 activity.onPaySuccess();
-            } else {
+            } else if (what == Config.REQUESTQRCODE_WHAT) {
                 String rescode = result.getString("rescode");
                 if (TextUtils.equals(rescode, "00")) {
                     if (TextUtils.equals(result.getString("result"), "success"))
-                        activity.onSuccess(result.getString("codeimgurl"));
+                        activity.onSuccess(result.getString("codeurl"));
                     else activity.onFail("result!=success\n" + result.toString());
                 } else {
                     activity.onFail(result.toString());
                 }
+            } else if (what == Config.QUERY_WHAT) {
+
             }
 
         }

@@ -28,7 +28,7 @@ public class LoginPresenter extends BasePresenter {
         if (activity != null) {
 
             String rescode = result.getString("rescode");
-            if (TextUtils.equals(rescode, "00")) {
+            if (TextUtils.equals(rescode, "0000")) {
                 activity.onSuccess("登录成功!");
             } else activity.onFail(result.toString());
 

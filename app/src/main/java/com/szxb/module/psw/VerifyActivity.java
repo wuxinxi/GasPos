@@ -51,8 +51,8 @@ public class VerifyActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        super.initView();
         ARouter.getInstance().inject(this);
+        super.initView();
         title.setText("安全效验");
         for (int button : buttons) {
             Button tempButton = (Button) findViewById(button);
@@ -85,7 +85,7 @@ public class VerifyActivity extends BaseActivity {
                 break;
             case R.id.num_determine:
                 String pswString = psw.getText().toString().trim();
-                if (TextUtils.equals(MD5.md5(pswString), FetchAppConfig.verfrityCode())) {
+                if (TextUtils.equals(MD5.md5(pswString), FetchAppConfig.verifyCode())) {
                     if (TextUtils.equals(activity, BillActivity.class.getSimpleName())) {
                         Router.jumpL("/gas/bill");
                         finish();

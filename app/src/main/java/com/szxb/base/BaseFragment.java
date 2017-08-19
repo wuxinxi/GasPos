@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jaeger.library.StatusBarUtil;
+
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -49,6 +51,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment imp
         if (rootView == null) {
             rootView = inflater.inflate(layoutID(), null);
             unbinder = ButterKnife.bind(this, rootView);
+            StatusBarUtil.setTransparent(getActivity());
             initView();
             initData();
         }

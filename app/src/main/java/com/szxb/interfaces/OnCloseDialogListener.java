@@ -10,5 +10,7 @@ import android.app.Dialog;
  */
 
 public interface OnCloseDialogListener {
-    void OnCloseDialog(Dialog mDialog);
+    void onCloseDialog(Dialog mDialog);
+
+    void onQueryCurrentOrder(Dialog mDialog);
 }

@@ -72,7 +72,7 @@ public class NetWorkBillFragment extends BaseFragment<BillPresenter> implements 
 
     @Override
     protected BillPresenter getChildPresenter() {
-        return new BillPresenter(this);
+        return new BillPresenter(null);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class NetWorkBillFragment extends BaseFragment<BillPresenter> implements 
     protected void initData() {
         map.put("BEGINTIME", DateUtil.getCurrentDate("yyyy-MM-dd"));
         map.put("ENDTIME", DateUtil.getCurrentDate("yyyy-MM-dd"));
-        mPresenter.requestData(Config.BILLNORMAL, map, Config.LOOP_URL);
+        mPresenter.requestData(Config.BILLNORMAL, map, Config.QUERY_URL);
     }
 
     @OnClick({R.id.startTime, R.id.endTime, R.id.search})

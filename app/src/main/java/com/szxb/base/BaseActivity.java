@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.jaeger.library.StatusBarUtil;
 import com.szxb.R;
 
 import butterknife.ButterKnife;
@@ -49,6 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         super.onCreate(savedInstanceState);
         setContentView(layoutID());
+        StatusBarUtil.setTransparent(this);
         unbinder = ButterKnife.bind(this);
         initView();
         initData();

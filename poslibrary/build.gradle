@@ -27,5 +27,6 @@ dependencies {
     compile rootProject.ext.dependencies["nohttp:okhttp"]
     compile rootProject.ext.dependencies["fastjson"]
     compile rootProject.ext.dependencies["library"]
+    
 
 }

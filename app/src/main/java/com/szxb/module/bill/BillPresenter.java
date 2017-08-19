@@ -8,6 +8,8 @@ import com.szxb.utils.Config;
 
 import java.lang.ref.WeakReference;
 
+import static android.R.attr.fragment;
+
 /**
  * 作者: Tangren on 2017/8/5
  * 包名：com.szxb.module.bill
@@ -17,23 +19,23 @@ import java.lang.ref.WeakReference;
 
 public class BillPresenter extends BasePresenter {
 
-    private WeakReference<NetWorkBillFragment> weakReference;
+    private WeakReference<BillActivity2> weakReference;
 
-    public BillPresenter(NetWorkBillFragment netWorkBillFragment) {
-        weakReference = new WeakReference<NetWorkBillFragment>(netWorkBillFragment);
+    public BillPresenter(BillActivity2 activity2) {
+        weakReference = new WeakReference<BillActivity2>(activity2);
     }
 
     @Override
     protected void onAllSuccess(int what, JSONObject result) {
-        NetWorkBillFragment fragment = weakReference.get();
-        if (fragment != null && result.getJSONArray("varList").size() > 0) {
+        BillActivity2 activity2 = weakReference.get();
+        if (activity2 != null && result.getJSONArray("varList").size() > 0) {
             BillEntity billEntity = new Gson().fromJson(result.toJSONString(), BillEntity.class);
             if (what == Config.BILLNORMAL)
-                fragment.loadSuccess(billEntity.getVarList());
+                activity2.loadSuccess(billEntity.getVarList());
             else if (what == Config.BILLREFRESH)
-                fragment.loadRefreshSuccess(billEntity.getVarList());
+                activity2.loadRefreshSuccess(billEntity.getVarList());
             else if (what == Config.BILLMORE)
-                fragment.loadMoreSuccess(billEntity.getVarList());
+                activity2.loadMoreSuccess(billEntity.getVarList());
         }
     }
 

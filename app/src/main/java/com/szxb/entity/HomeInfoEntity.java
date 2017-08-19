@@ -1,5 +1,8 @@
 package com.szxb.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Unique;
@@ -12,7 +15,7 @@ import org.greenrobot.greendao.annotation.Generated;
  * TODO:一句话描述
  */
 @Entity
-public class HomeInfoEntity {
+public class HomeInfoEntity implements Parcelable {
     @Id(autoincrement = true)
     private Long id;
 
@@ -195,4 +198,54 @@ public class HomeInfoEntity {
     public void setGasTime(String gasTime) {
         this.gasTime = gasTime;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeInt(this.noId);
+        dest.writeString(this.gasNo);
+        dest.writeString(this.gasUnitPrice);
+        dest.writeString(this.gasMemberUnitPrice);
+        dest.writeString(this.gasCapacity);
+        dest.writeString(this.gasMoney);
+        dest.writeString(this.gasMemberMoney);
+        dest.writeString(this.gasPayStatus);
+        dest.writeString(this.gasOrderNo);
+        dest.writeString(this.xbOrderNo);
+        dest.writeString(this.gasDate);
+        dest.writeString(this.gasTime);
+    }
+
+    protected HomeInfoEntity(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.noId = in.readInt();
+        this.gasNo = in.readString();
+        this.gasUnitPrice = in.readString();
+        this.gasMemberUnitPrice = in.readString();
+        this.gasCapacity = in.readString();
+        this.gasMoney = in.readString();
+        this.gasMemberMoney = in.readString();
+        this.gasPayStatus = in.readString();
+        this.gasOrderNo = in.readString();
+        this.xbOrderNo = in.readString();
+        this.gasDate = in.readString();
+        this.gasTime = in.readString();
+    }
+
+    public static final Parcelable.Creator<HomeInfoEntity> CREATOR = new Parcelable.Creator<HomeInfoEntity>() {
+        @Override
+        public HomeInfoEntity createFromParcel(Parcel source) {
+            return new HomeInfoEntity(source);
+        }
+
+        @Override
+        public HomeInfoEntity[] newArray(int size) {
+            return new HomeInfoEntity[size];
+        }
+    };
 }

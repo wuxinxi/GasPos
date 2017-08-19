@@ -125,6 +125,13 @@ public class DateUtil {
     }
 
 
+    /**
+     * 计算相差几天
+     *
+     * @param date1
+     * @param date2
+     * @return
+     */
     public static int getBetweenDay(Date date1, Date date2) {
         Calendar d1 = new GregorianCalendar();// 保存时候的日期
         d1.setTime(date1);

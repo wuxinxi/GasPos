@@ -3,6 +3,7 @@ package com.szxb.widget;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,8 +17,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.szxb.R;
@@ -32,7 +34,7 @@ public class ImageDialog extends DialogFragment implements View.OnClickListener,
 
     private ImageView img;
 
-    private ProgressBar progressBar;
+    private CircleProgressBar progressBar;
 
     private OnCloseDialogListener listener;
 
@@ -54,9 +56,11 @@ public class ImageDialog extends DialogFragment implements View.OnClickListener,
         img = (ImageView) view.findViewById(R.id.img);
         Button button = (Button) view.findViewById(R.id.dis);
         Button button2 = (Button) view.findViewById(R.id.dis2);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        TextView payStatus = (TextView) view.findViewById(R.id.payStatus);
+        progressBar = (CircleProgressBar) view.findViewById(R.id.progress);
         button.setOnClickListener(this);
         button2.setOnClickListener(this);
+        payStatus.setOnClickListener(this);
         getDialog().setCanceledOnTouchOutside(false);
         getDialog().setOnKeyListener(this);
         return view;
@@ -88,8 +92,17 @@ public class ImageDialog extends DialogFragment implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
-        if (listener != null)
-            listener.OnCloseDialog(getDialog());
+        switch (v.getId()) {
+            case R.id.payStatus:
+                if (listener != null)
+                    listener.onQueryCurrentOrder(getDialog());
+                break;
+            default:
+                if (listener != null)
+                    listener.onCloseDialog(getDialog());
+                break;
+        }
+
     }
 
     public void dismiss() {
@@ -125,11 +138,29 @@ public class ImageDialog extends DialogFragment implements View.OnClickListener,
                     });
     }
 
+
+    public void setImage(Bitmap bitmap) {
+        showProgress();
+        if (img == null)
+            throw new NullPointerException("img null");
+        else {
+            img.setImageBitmap(bitmap);
+            hideProgress();
+        }
+    }
+
+
     public void hideProgress() {
         if (progressBar == null)
             throw new NullPointerException("progressBar null");
         else progressBar.setVisibility(View.GONE);
     }
+    public void showProgress() {
+        if (progressBar == null)
+            throw new NullPointerException("progressBar null");
+        else progressBar.setVisibility(View.VISIBLE);
+    }
+
 
     public void setCloseDialogListener(OnCloseDialogListener listener) {
         this.listener = listener;

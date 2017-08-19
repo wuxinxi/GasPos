@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="szxb.com.m680.module.main.MainActivity">
+
+    <include layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button_1"
+            style="@style/w_h_warmap"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/main_button_1"
+            android:paddingTop="70dp"
+            android:text="员工交易明细"
+            android:textColor="@color/colorWhite"
+            android:textSize="30sp" />
+
+
+        <Button
+            android:id="@+id/button_2"
+            style="@style/w_h_warmap"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/button_1"
+            android:background="@drawable/main_button_2"
+            android:paddingTop="70dp"
+            android:text="销售统计"
+            android:textColor="@color/colorWhite"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/button_3"
+            style="@style/w_h_warmap"
+            android:layout_below="@id/button_1"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/main_button_3"
+            android:paddingTop="70dp"
+            android:text="交接班汇总"
+            android:textColor="@color/colorWhite"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/button_4"
+            style="@style/w_h_warmap"
+            android:layout_below="@id/button_1"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@id/button_3"
+            android:background="@drawable/main_button_4" />
+    </RelativeLayout>
+
+</LinearLayout>

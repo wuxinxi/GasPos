@@ -6,11 +6,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.szxb.R;
 import com.szxb.base.BaseMvpActivity;
+import com.szxb.entity.HomeInfoEntity;
 import com.szxb.utils.Util;
-import com.szxb.utils.router.Router;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -37,6 +39,9 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
     private String temUserName;
     private String temUserPsw;
 
+    @Autowired
+    HomeInfoEntity infoEntity;
+
     private int[] buttons = {R.id.num_0, R.id.num_1, R.id.num_2, R.id.num_3, R.id.num_4,
             R.id.num_5, R.id.num_6, R.id.num_7, R.id.num_8, R.id.num_9};
 
@@ -48,6 +53,7 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
     @Override
     protected void initView() {
         super.initView();
+        ARouter.getInstance().inject(this);
         title.setText("会员验证");
         temp.setVisibility(View.VISIBLE);
         temp.setText("跳过");
@@ -94,8 +100,7 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(psw))
                     Toast.makeText(this, "手机号或密码不能为空!", Toast.LENGTH_SHORT).show();
                 else {
-                    Router.jumpL("/gas/order");
-                    finish();
+                    next();
                 }
                 break;
             case R.id.userName:
@@ -109,12 +114,19 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
                 userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, R.mipmap.hline, 0);
                 break;
             case R.id.temp:
-                Router.jumpL("/gas/order");
-                finish();
+                next();
                 break;
             default:
                 break;
         }
+    }
+
+    private void next() {
+        ARouter.getInstance().build("/gas/order")
+                .greenChannel()
+                .withParcelable("infoEntity", infoEntity)
+                .navigation();
+        finish();
     }
 
     @Override

@@ -38,23 +38,10 @@
                     android:layout_marginTop="15dp" />
 
                 <TextView
+                    android:id="@+id/common_settings"
                     style="@style/SetTextStyle"
                     android:drawableLeft="@mipmap/ic_settings"
                     android:text="@string/settings_comm" />
-
-                <View style="@style/LintStyle" />
-
-                <TextView
-                    style="@style/SetTextStyle"
-                    android:drawableLeft="@mipmap/ic_set_pay"
-                    android:text="@string/set_pay" />
-
-                <View style="@style/LintStyle" />
-
-                <TextView
-                    style="@style/SetTextStyle"
-                    android:drawableLeft="@mipmap/ic_tr"
-                    android:text="@string/set_tr" />
 
                 <View style="@style/LintStyle" />
 
@@ -72,6 +59,7 @@
                         android:text="@string/set_clear_zero" />
 
                     <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchCompat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
@@ -84,8 +72,17 @@
                 <View style="@style/LintStyle" />
 
                 <TextView
+                    android:id="@+id/update_psw"
                     style="@style/SetTextStyle"
                     android:drawableLeft="@mipmap/ic_check_update"
+                    android:text="@string/set_psw" />
+
+                <View style="@style/LintStyle" />
+
+                <TextView
+                    android:id="@+id/check_update"
+                    style="@style/SetTextStyle"
+                    android:drawableLeft="@mipmap/ic_update_psw"
                     android:text="@string/check_update" />
 
                 <View style="@style/LintStyle" />
@@ -115,10 +112,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="vertical">
+
                 <TextView
+                    android:id="@+id/setting_title"
                     style="@style/SetTextStyleTop"
                     android:text="@string/settings_comm" />
+
                 <View style="@style/LintStyle" />
+
+                <View
+                    style="@style/LintStyle"
+                    android:layout_marginTop="15dp" />
+
+                <include
+                    android:id="@+id/view_comm_layout"
+                    layout="@layout/view_comm_layout" />
+
+                <include
+                    android:id="@+id/view_update_layout"
+                    layout="@layout/view_update_layout"
+                    android:visibility="gone" />
+
+                <include
+                    android:id="@+id/view_check_layout"
+                    layout="@layout/view_check_layout"
+                    android:visibility="gone" />
 
 
             </LinearLayout>

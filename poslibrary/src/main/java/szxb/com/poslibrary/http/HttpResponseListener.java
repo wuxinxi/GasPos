@@ -49,7 +49,7 @@ public class HttpResponseListener<T> implements OnResponseListener<T> {
 
     @Override
     public void onFailed(int what, Response<T> response) {
-        Logger.i("失败");
+        Logger.i("失败"+response.getException());
         if (httpListener != null)
             httpListener.fail(what, response.getException().getMessage());
 

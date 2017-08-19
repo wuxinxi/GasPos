@@ -5,18 +5,18 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
-import com.github.ybq.android.spinkit.style.Circle;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 import com.szxb.R;
 import com.szxb.base.BaseMvpActivity;
 import com.szxb.db.sp.CommonSharedPreferences;
 import com.szxb.db.sp.FetchAppConfig;
-import com.szxb.utils.Config;
 import com.szxb.utils.MD5;
+import com.szxb.utils.comm.Constant;
 import com.szxb.utils.router.Router;
+import com.szxb.utils.tip.Tip;
+import com.szxb.widget.MemberLoginDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,14 +45,12 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> {
     Button buttonLogin;
     @BindView(R.id.buttonClose)
     Button buttonClose;
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
+    @BindView(R.id.progress1)
+    CircleProgressBar progressBar;
 
     private String user;
     private String psw;
     private String no;
-
-    private Circle circle;
 
     @Override
     protected LoginPresenter getChildPresenter() {
@@ -70,18 +68,17 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> {
         //没有toolbar所以要注释掉父类的initView
         //super.initView();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        circle = new Circle();
+
     }
 
     @Override
     protected void initData() {
 
         userName.setText(FetchAppConfig.mchId());
-
-        circle.setColor(getResources().getColor(R.color.colorAccent));
-        progressBar.setIndeterminateDrawable(circle);
-
+        mDialog = new MemberLoginDialog(this);
     }
+
+    MemberLoginDialog mDialog;
 
     @OnClick({R.id.buttonLogin, R.id.buttonClose})
     public void onViewClicked(View view) {
@@ -93,17 +90,17 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> {
         switch (view.getId()) {
             case R.id.buttonLogin:
                 if (TextUtils.isEmpty(no) || TextUtils.isEmpty(user) || TextUtils.isEmpty(psw)) {
-                    Toast.makeText(this, "编号、商户号或密码不能为空", Toast.LENGTH_SHORT).show();
+                    Tip.show(getApplicationContext(), "编号、商户号或密码不能为空", false);
                 } else {
-                    circle.start();
                     progressBar.setVisibility(View.VISIBLE);
                     userPsw.setText(MD5.md5(psw));
                     userPsw.setSelection(userPsw.getText().length());
-                    buttonLogin.setEnabled(false);
+                    setEnable(false);
                     Map<String, Object> map = new HashMap<>();
                     map.put("mchid", user);
                     map.put("password", psw);
-                    mPresenter.requestData(REQUESTQRCODE_WHAT, map, Config.LOGIN_RUL);
+                    map.put("operaterno", no);
+                    mPresenter.requestData(REQUESTQRCODE_WHAT, map, Constant.LOGIN_URL);
                 }
                 break;
             case R.id.buttonClose:
@@ -114,11 +111,18 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> {
         }
     }
 
+    private void setEnable(boolean enable) {
+        buttonLogin.setEnabled(enable);
+        userPsw.setEnabled(enable);
+        userName.setEnabled(enable);
+    }
+
     @Override
     public void onSuccess(String str) {
         CommonSharedPreferences.put("mch_id", user);
         CommonSharedPreferences.put("user_no", no);
         progressBar.setVisibility(View.GONE);
+
         Router.jumpL("/gas/home");
         finish();
     }
@@ -126,15 +130,9 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> {
     @Override
     public void onFail(String str) {
         userPsw.setText("");
-        buttonLogin.setEnabled(true);
+        setEnable(true);
         progressBar.setVisibility(View.GONE);
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        Tip.show(getApplicationContext(), str, false);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (circle != null)
-            circle.stop();
-    }
 }

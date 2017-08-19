@@ -35,7 +35,7 @@ public class LocalBIllFragment extends BaseFragment {
 
     @Override
     protected int layoutID() {
-        return R.layout.fragment_local;
+        return R.layout.fragment_network;
     }
 
     @Override

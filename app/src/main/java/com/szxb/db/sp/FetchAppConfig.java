@@ -23,7 +23,7 @@ public class FetchAppConfig {
     }
 
     //安全码
-    public static String verfrityCode() {
+    public static String verifyCode() {
         return (String) CommonSharedPreferences.get("verifyCode", MD5.md5("888888"));
     }
 

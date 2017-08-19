@@ -109,6 +109,13 @@ public class DBManager<T> {
         return homeInfoEntityCountQuery.count() <= 0;
     }
 
+    public static void updatePayState(String orderNo) {
+        HomeInfoEntity data = DBCore.getDaoSession().queryBuilder(HomeInfoEntity.class).where(HomeInfoEntityDao.Properties.XbOrderNo.eq(orderNo)).build().unique();
+        if (data == null) return;
+        data.setGasPayStatus("已支付");
+        DBCore.getASyncDaoSession().update(data);
+    }
+
     public static List<HomeInfoEntity> query() {
         HomeInfoEntityDao dao = DBCore.getDaoSession().getHomeInfoEntityDao();
         return dao.queryBuilder()

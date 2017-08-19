@@ -8,6 +8,7 @@
 
     <color name="transparent">#00000000</color>
     <color name="transparent_">#20000000</color>
+    <color name="transparent_2">#5a000000</color>
 
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>

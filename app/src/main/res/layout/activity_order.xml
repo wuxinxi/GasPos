@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar_title"/>
+    <include layout="@layout/toolbar_title" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,7 +50,6 @@
                 style="@style/PayLayoutTextRight"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/title"
                 android:text="油品单价:0.00" />
 
             <TextView
@@ -102,6 +101,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:background="@drawable/ali_selector" />
+
+        <Button
+            android:id="@+id/cashe"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/ic_cash_normal" />
     </LinearLayout>
 
 </LinearLayout>

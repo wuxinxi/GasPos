@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGray"
     android:orientation="vertical">
+
+    <include layout="@layout/toolbar_title" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,10 +55,10 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/search"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:id="@+id/search"
-            android:background="@mipmap/ic_query"/>
+            android:background="@mipmap/ic_query" />
 
     </LinearLayout>
 
