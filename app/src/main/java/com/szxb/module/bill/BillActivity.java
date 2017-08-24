@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.alibaba.android.arouter.facade.annotation.Route;
 import com.szxb.R;
 import com.szxb.base.BaseActivity;
 
@@ -20,7 +19,7 @@ import butterknife.BindView;
  * 邮箱：996489865@qq.com
  * TODO:交易查询
  */
-@Route(path = "/gas/bill")
+
 public class BillActivity extends BaseActivity {
     @BindView(R.id.tabLayout)
     TabLayout tabLayout;

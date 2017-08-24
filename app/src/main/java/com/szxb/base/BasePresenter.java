@@ -1,11 +1,10 @@
 package com.szxb.base;
 
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.szxb.utils.Config;
+import com.szxb.utils.comm.Constant;
 import com.yanzhenjie.nohttp.RequestMethod;
 import com.yanzhenjie.nohttp.rest.CacheMode;
 import com.yanzhenjie.nohttp.rest.Response;
@@ -29,12 +28,15 @@ public abstract class BasePresenter {
 
     private JsonRequest request;
 
+    //是否取消轮训任务的标识符
+    private boolean cancel = false;
+
     public void requestData(int what, Map<String, Object> map, String url) {
         if (null == map)
             throw new IllegalArgumentException("no enity");
         if (what == Config.LOOP_WHAT) {
             timer = new Timer();
-            timer.schedule(new LoopTimerTask(what, map, url), 2000, 3500);
+            timer.schedule(new LoopTimerTask(what, map, url), 2000, 2500);
         } else {
             requestPost(what, map, url);
         }
@@ -54,8 +56,11 @@ public abstract class BasePresenter {
 
         @Override
         public void run() {
-            if (count > 30)
+            //有效期2分钟
+            if (count > 48) {
                 cancel();
+                cancel = true;
+            }
             requestPost(what, map, url);
             count++;
         }
@@ -66,46 +71,63 @@ public abstract class BasePresenter {
         request.setCancelSign(what);
         request.setCacheMode(CacheMode.ONLY_REQUEST_NETWORK);
         request.set(map);
-        request.setRetryCount(3);
         CallServer.getHttpclient().add(what, request, new HttpListener<JSONObject>() {
             @Override
             public void success(int what, Response<JSONObject> response) {
                 Log.d("BasePresenter",
-                    "success(BasePresenter.java:75)"+response.get().toJSONString());
+                        "success(BasePresenter.java:71)" + response.get().toJSONString());
                 if (response.get() != null) {
-                    if (what == Config.LOOP_WHAT) {//轮训任务
-                        JSONArray array = response.get().getJSONArray("varList");
-                        if (array.size() > 0) {
-                            JSONObject object = array.getJSONObject(0);
-                            if (TextUtils.equals(object.getString("PAYSTS"), "1")) {
-                                onAllSuccess(Config.LOOP_WHAT, object);
+                    if (what == Constant.LOOP_WHAT) {//轮训任务
+                        String rescode = response.get().getString("rescode");
+                        switch (rescode) {
+                            case "0000":
+                                onAllSuccess(what, response.get());
                                 cancelTimerTask();
-                            }
+                                break;
+                            case "0001":
+                                //支付中不做处理
+                                break;
+                            default:
+                                //其他均为失败，并且取消轮训任务
+                                onFail(what, response.get().toJSONString());
+                                cancelTimerTask();
+                                break;
                         }
+
                     } else//其他网络任务
                         onAllSuccess(what, response.get());
-                } else onFail("请求服务器异常!");
+                } else {
+                    onFail(what, "请求服务器异常!");
+                }
             }
 
             @Override
             public void fail(int what, String e) {
-                onFail("网络或服务器异常!");
+                onFail(what, "网络或服务器异常!");
             }
         });
-       
+
     }
 
     protected abstract void onAllSuccess(int what, JSONObject result);
 
-    protected abstract void onFail(String failStr);
+    protected abstract void onFail(int what, String failStr);
 
     public void cancelTimerTask() {
         if (timer != null) {
             Log.d("BasePresenter",
-                "cancelTimerTask(BasePresenter.java:105)TimerTask stop ……");
+                    "cancelTimerTask(BasePresenter.java:105)TimerTask stop ……");
             timer.cancel();
             request.cancelBySign(Config.LOOP_WHAT);
+            cancel = true;
         }
+    }
+
+
+    //为了避免轮训任务与手动查询冲突
+    //如果没有取消轮训任务不允许手动查询
+    public boolean isCancleTask() {
+        return cancel;
     }
 
 }

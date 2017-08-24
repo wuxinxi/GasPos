@@ -118,7 +118,7 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> {
     }
 
     @Override
-    public void onSuccess(String str) {
+    public void onSuccess(int what,String str) {
         CommonSharedPreferences.put("mch_id", user);
         CommonSharedPreferences.put("user_no", no);
         progressBar.setVisibility(View.GONE);
@@ -128,7 +128,7 @@ public class LoginActivity extends BaseMvpActivity<LoginPresenter> {
     }
 
     @Override
-    public void onFail(String str) {
+    public void onFail(int what,String str) {
         userPsw.setText("");
         setEnable(true);
         progressBar.setVisibility(View.GONE);

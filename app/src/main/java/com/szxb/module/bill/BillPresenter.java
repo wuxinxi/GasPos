@@ -8,8 +8,6 @@ import com.szxb.utils.Config;
 
 import java.lang.ref.WeakReference;
 
-import static android.R.attr.fragment;
-
 /**
  * 作者: Tangren on 2017/8/5
  * 包名：com.szxb.module.bill
@@ -28,19 +26,22 @@ public class BillPresenter extends BasePresenter {
     @Override
     protected void onAllSuccess(int what, JSONObject result) {
         BillActivity2 activity2 = weakReference.get();
-        if (activity2 != null && result.getJSONArray("varList").size() > 0) {
-            BillEntity billEntity = new Gson().fromJson(result.toJSONString(), BillEntity.class);
-            if (what == Config.BILLNORMAL)
-                activity2.loadSuccess(billEntity.getVarList());
-            else if (what == Config.BILLREFRESH)
-                activity2.loadRefreshSuccess(billEntity.getVarList());
-            else if (what == Config.BILLMORE)
-                activity2.loadMoreSuccess(billEntity.getVarList());
+        if (activity2 != null) {
+            if (result.getString("rescode").equals("0000")) {
+
+                BillEntity billEntity = new Gson().fromJson(result.toJSONString(), BillEntity.class);
+                if (what == Config.BILLNORMAL)
+                    activity2.loadSuccess(billEntity.getJourList());
+                else if (what == Config.BILLREFRESH)
+                    activity2.loadRefreshSuccess(billEntity.getJourList());
+                else if (what == Config.BILLMORE)
+                    activity2.loadMoreSuccess(billEntity.getJourList());
+            }
         }
     }
 
     @Override
-    protected void onFail(String failStr) {
+    protected void onFail(int what, String failStr) {
 
     }
 }

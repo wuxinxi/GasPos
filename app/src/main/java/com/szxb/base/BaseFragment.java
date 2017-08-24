@@ -71,12 +71,12 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment imp
     }
 
     @Override
-    public void onSuccess(String str) {
+    public void onSuccess(int what,String str) {
 
     }
 
     @Override
-    public void onFail(String str) {
+    public void onFail(int what,String str) {
 
     }
 

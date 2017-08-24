@@ -29,16 +29,16 @@ public class LoginPresenter extends BasePresenter {
 
             String rescode = result.getString("rescode");
             if (TextUtils.equals(rescode, "0000")) {
-                activity.onSuccess("登录成功!");
-            } else activity.onFail(result.toString());
+                activity.onSuccess(what, "登录成功!");
+            } else activity.onFail(what, result.toString());
 
         }
     }
 
     @Override
-    protected void onFail(String failStr) {
+    protected void onFail(int what, String failStr) {
         LoginActivity activity = weakReference.get();
         if (activity != null)
-            activity.onFail(failStr);
+            activity.onFail(what, failStr);
     }
 }

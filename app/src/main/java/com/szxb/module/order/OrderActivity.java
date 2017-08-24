@@ -6,11 +6,11 @@ import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -21,9 +21,9 @@ import com.szxb.db.manager.DBManager;
 import com.szxb.db.sp.FetchAppConfig;
 import com.szxb.entity.HomeInfoEntity;
 import com.szxb.interfaces.OnCloseDialogListener;
-import com.szxb.utils.Config;
 import com.szxb.utils.DateUtil;
 import com.szxb.utils.Util;
+import com.szxb.utils.comm.Constant;
 import com.szxb.utils.tip.Tip;
 import com.szxb.widget.ImageDialog;
 
@@ -72,6 +72,10 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
     @Autowired
     HomeInfoEntity infoEntity;
 
+    //当前油站的订单号
+    //一笔加油信息一笔记录
+    private String currentGasOrder;
+
     private Bitmap bitmap;
 
     @Override
@@ -107,9 +111,10 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
         transactionFlow.setText("交易流水:" + infoEntity.getGasOrderNo());
         gasTotal.setText("加油总价:" + infoEntity.getGasMoney());
         memberTotal.setText("会员价格:无");
-        orderNo = infoEntity.getXbOrderNo();
         imageDialog = ImageDialog.getImageDialog();
         imageDialog.setCloseDialogListener(this);
+
+        currentGasOrder = infoEntity.getGasOrderNo();
 
     }
 
@@ -118,6 +123,9 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
     protected Map<String, Object> getRequestParams() {
         Map<String, Object> map = new HashMap<>();
 //        if (orderNo == null)
+        Log.d("OrderActivity",
+                "getRequestParams(OrderActivity.java:121)" + infoEntity.getGasOrderNo());
+
         orderNo = Util.getOrderNo();
         map.put("orderid", orderNo);
         map.put("trantype", paytype);
@@ -125,7 +133,7 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
         map.put("devno", "001");
         map.put("memno", "1");//会员卡号,如果不是会员传1
         map.put("member_status", "1");//会员卡号,如果不是会员传1
-        map.put("mchid", "100100100101");
+        map.put("mchid", FetchAppConfig.mchId());
         map.put("mername", "小兵智能科技有限公司");
         map.put("goodname", "90#");//油品名称
         map.put("goodcode", "0092");//商品代码
@@ -135,7 +143,7 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
         map.put("trantime", DateUtil.getCurrentDate());//订单时间
         map.put("saletime", DateUtil.getCurrentDate());//销售时间
         map.put("class", "001");//班次
-        map.put("operaterno", "001");//操作员编号
+        map.put("operaterno", FetchAppConfig.userNo());//操作员编号
         map.put("salerno", "001");//销售员编号
         map.put("mchineno", "12");//加油机号
         map.put("gmchineno", "1");//加油枪号
@@ -147,8 +155,8 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
     @Override
     protected Map<String, Object> getLoopRequestParams() {
         Map<String, Object> map = new HashMap<>();
-        map.put("MCHID", FetchAppConfig.mchId());
-        map.put("ORDERID", orderNo);
+        map.put("mchid", FetchAppConfig.mchId());
+        map.put("orderid", orderNo);
         return map;
     }
 
@@ -171,7 +179,7 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
                                 Map<String, Object> map = new HashMap<>();
                                 map.put("mch_id", FetchAppConfig.mchId());
                                 map.put("out_trade_no", orderNo);
-                                mPresenter.requestData(Config.QUERY_WHAT, map, Config.QUERY_URL);
+                                mPresenter.requestData(Constant.QUERY_WHAT, map, Constant.QUERY_URL);
                             }
                         })
                         .setNegativeButton("退出", null)
@@ -189,30 +197,29 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
             mFragTransaction.remove(fragment);
         }
         imageDialog.show(mFragTransaction, "img");
-        mPresenter.requestData(Config.REQUESTQRCODE_WHAT, getRequestParams(), Config.SCANPAY_URL);
+        mPresenter.requestData(Constant.REQUESTQRCODE_WHAT, getRequestParams(), Constant.PAY_URL);
     }
 
     @Override
-    public void onSuccess(String str) {
-//        imageDialog.setImage(getApplicationContext(), str);
-        bitmap=Util.CreateCode(str);
+    public void onSuccess(int what, String str) {
+
+        bitmap = Util.CreateCode(str);
         imageDialog.setImage(bitmap);
-        mPresenter.requestData(Config.LOOP_WHAT, getLoopRequestParams(), Config.QUERY_URL);
+        mPresenter.requestData(Constant.LOOP_WHAT, getLoopRequestParams(), Constant.QUERY_URL);
     }
 
     @Override
     public void onPaySuccess() {
-        imageDialog.dismiss();
-        DBManager.updatePayState(orderNo);
+        disDialog();
+        DBManager.updatePayState(currentGasOrder);
         Tip.show(getApplicationContext(), "支付成功!", true);
         this.setResult(0x11);
         finishActivityFromRight();
     }
 
     @Override
-    public void onFail(String str) {
-        imageDialog.dismiss();
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+    public void onFail(int what, String str) {
+        Tip.show(getApplicationContext(), str, false);
     }
 
     @Override
@@ -227,7 +234,13 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
     public void onQueryCurrentOrder(Dialog mDialog) {
         //当支付状态不明确时
         //查询此订单支付状态
-        Tip.show(getApplicationContext(), "支付状态不明确!", false);
+        if (mPresenter.isCancleTask()) {
+            //如果已经取消了轮训任务则可以手动查询
+            mPresenter.requestData(Constant.QUERY_WHAT, getLoopRequestParams(), Constant.QUERY_URL);
+        } else {
+            Tip.show(getApplicationContext(), "正在查询中!", false);
+        }
+
     }
 
 
@@ -241,5 +254,11 @@ public class OrderActivity extends BaseMvpActivity<TransactionPresenter> impleme
         super.onDestroy();
         if (bitmap != null && !bitmap.isRecycled())
             bitmap.recycle();
+    }
+
+    private void disDialog() {
+        if (imageDialog != null && imageDialog.isAdded()) {
+            imageDialog.dismiss();
+        }
     }
 }

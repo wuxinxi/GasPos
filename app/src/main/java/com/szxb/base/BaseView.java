@@ -7,9 +7,9 @@ package com.szxb.base;
  */
 public interface BaseView {
 
-    void onSuccess(String str);
+    void onSuccess(int what,String str);
 
-    void onFail(String str);
+    void onFail(int what,String str);
 
     void onPaySuccess();
 }

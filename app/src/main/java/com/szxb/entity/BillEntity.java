@@ -11,69 +11,97 @@ import java.util.List;
 
 public class BillEntity {
 
-    private List<VarListBean> varList;
+    /**
+     * result : success
+     * jourList : [{"CLASS":"001","SALETIME":"2017-08-22 12:41:42","PAYSTS":"1","GMCHINENO":"1","TRANTIME":"2017-08-22 12:41:42","TRANDATE":"2017-08-22","MERNAME":"托肯恒山","AMOUNT":0.01,"SCANWAY":"0","TRANTYPE":"1","MCHID":"100100100101","RMK":"无","PAYWAY":"2","TOTAL_FEE":0.01,"DEVNO":"001","HSORDER_ID":"dcb0781bef0c426fa0d3b3b79b4ec05a","MCHINENO":"12","HSORDERID":"gas2017082212414275199","OPERATERNO":"110"}]
+     * rescode : 0000
+     */
 
-    public List<VarListBean> getVarList() {
-        return varList;
+    private String result;
+    private String rescode;
+    private List<JourListBean> jourList;
+
+    public String getResult() {
+        return result;
     }
 
-    public void setVarList(List<VarListBean> varList) {
-        this.varList = varList;
+    public void setResult(String result) {
+        this.result = result;
     }
 
-    public static class VarListBean {
+    public String getRescode() {
+        return rescode;
+    }
+
+    public void setRescode(String rescode) {
+        this.rescode = rescode;
+    }
+
+    public List<JourListBean> getJourList() {
+        return jourList;
+    }
+
+    public void setJourList(List<JourListBean> jourList) {
+        this.jourList = jourList;
+    }
+
+    public static class JourListBean {
         /**
-         * ORDER_ID : 4d645ef8de054195bebfe735f8766425
-         * DEVNO : 110
-         * ORDERID : gas2017080419025689892
-         * PAYSTS : 0
-         * TRANTIME : 2017-08-04 19:02:58
-         * TRANDATE : 2017-08-04
-         * MERNAME : 武汉小兵
-         * AMOUNT : 1
-         * PAYFLAG : 1
-         * MCHID : 100100100101
+         * CLASS : 001
+         * SALETIME : 2017-08-22 12:41:42
+         * PAYSTS : 1
+         * GMCHINENO : 1
+         * TRANTIME : 2017-08-22 12:41:42
+         * TRANDATE : 2017-08-22
+         * MERNAME : 托肯恒山
+         * AMOUNT : 0.01
+         * SCANWAY : 0
          * TRANTYPE : 1
+         * MCHID : 100100100101
+         * RMK : 无
          * PAYWAY : 2
-         * MEMNO :
+         * TOTAL_FEE : 0.01
+         * DEVNO : 001
+         * HSORDER_ID : dcb0781bef0c426fa0d3b3b79b4ec05a
+         * MCHINENO : 12
+         * HSORDERID : gas2017082212414275199
+         * OPERATERNO : 110
          */
 
-        private String ORDER_ID;
-        private String DEVNO;
-        private String ORDERID;
+        private String CLASS;
+        private String SALETIME;
         private String PAYSTS;
+        private String GMCHINENO;
         private String TRANTIME;
         private String TRANDATE;
         private String MERNAME;
-        private String AMOUNT;
-        private String PAYFLAG;
-        private String MCHID;
+        private double AMOUNT;
+        private String SCANWAY;
         private String TRANTYPE;
+        private String MCHID;
+        private String RMK;
         private String PAYWAY;
-        private String MEMNO;
+        private double TOTAL_FEE;
+        private String DEVNO;
+        private String HSORDER_ID;
+        private String MCHINENO;
+        private String HSORDERID;
+        private String OPERATERNO;
 
-        public String getORDER_ID() {
-            return ORDER_ID;
+        public String getCLASS() {
+            return CLASS;
         }
 
-        public void setORDER_ID(String ORDER_ID) {
-            this.ORDER_ID = ORDER_ID;
+        public void setCLASS(String CLASS) {
+            this.CLASS = CLASS;
         }
 
-        public String getDEVNO() {
-            return DEVNO;
+        public String getSALETIME() {
+            return SALETIME;
         }
 
-        public void setDEVNO(String DEVNO) {
-            this.DEVNO = DEVNO;
-        }
-
-        public String getORDERID() {
-            return ORDERID;
-        }
-
-        public void setORDERID(String ORDERID) {
-            this.ORDERID = ORDERID;
+        public void setSALETIME(String SALETIME) {
+            this.SALETIME = SALETIME;
         }
 
         public String getPAYSTS() {
@@ -82,6 +110,14 @@ public class BillEntity {
 
         public void setPAYSTS(String PAYSTS) {
             this.PAYSTS = PAYSTS;
+        }
+
+        public String getGMCHINENO() {
+            return GMCHINENO;
+        }
+
+        public void setGMCHINENO(String GMCHINENO) {
+            this.GMCHINENO = GMCHINENO;
         }
 
         public String getTRANTIME() {
@@ -108,28 +144,20 @@ public class BillEntity {
             this.MERNAME = MERNAME;
         }
 
-        public String getAMOUNT() {
+        public double getAMOUNT() {
             return AMOUNT;
         }
 
-        public void setAMOUNT(String AMOUNT) {
+        public void setAMOUNT(double AMOUNT) {
             this.AMOUNT = AMOUNT;
         }
 
-        public String getPAYFLAG() {
-            return PAYFLAG;
+        public String getSCANWAY() {
+            return SCANWAY;
         }
 
-        public void setPAYFLAG(String PAYFLAG) {
-            this.PAYFLAG = PAYFLAG;
-        }
-
-        public String getMCHID() {
-            return MCHID;
-        }
-
-        public void setMCHID(String MCHID) {
-            this.MCHID = MCHID;
+        public void setSCANWAY(String SCANWAY) {
+            this.SCANWAY = SCANWAY;
         }
 
         public String getTRANTYPE() {
@@ -140,6 +168,22 @@ public class BillEntity {
             this.TRANTYPE = TRANTYPE;
         }
 
+        public String getMCHID() {
+            return MCHID;
+        }
+
+        public void setMCHID(String MCHID) {
+            this.MCHID = MCHID;
+        }
+
+        public String getRMK() {
+            return RMK;
+        }
+
+        public void setRMK(String RMK) {
+            this.RMK = RMK;
+        }
+
         public String getPAYWAY() {
             return PAYWAY;
         }
@@ -148,38 +192,77 @@ public class BillEntity {
             this.PAYWAY = PAYWAY;
         }
 
-        public String getMEMNO() {
-            return MEMNO;
+        public double getTOTAL_FEE() {
+            return TOTAL_FEE;
         }
 
-        public void setMEMNO(String MEMNO) {
-            this.MEMNO = MEMNO;
+        public void setTOTAL_FEE(double TOTAL_FEE) {
+            this.TOTAL_FEE = TOTAL_FEE;
+        }
+
+        public String getDEVNO() {
+            return DEVNO;
+        }
+
+        public void setDEVNO(String DEVNO) {
+            this.DEVNO = DEVNO;
+        }
+
+        public String getHSORDER_ID() {
+            return HSORDER_ID;
+        }
+
+        public void setHSORDER_ID(String HSORDER_ID) {
+            this.HSORDER_ID = HSORDER_ID;
+        }
+
+        public String getMCHINENO() {
+            return MCHINENO;
+        }
+
+        public void setMCHINENO(String MCHINENO) {
+            this.MCHINENO = MCHINENO;
+        }
+
+        public String getHSORDERID() {
+            return HSORDERID;
+        }
+
+        public void setHSORDERID(String HSORDERID) {
+            this.HSORDERID = HSORDERID;
+        }
+
+        public String getOPERATERNO() {
+            return OPERATERNO;
+        }
+
+        public void setOPERATERNO(String OPERATERNO) {
+            this.OPERATERNO = OPERATERNO;
         }
 
         @Override
         public String toString() {
-            return "VarListBean{" +
-                    "ORDER_ID='" + ORDER_ID + '\'' +
-                    ", DEVNO='" + DEVNO + '\'' +
-                    ", ORDERID='" + ORDERID + '\'' +
+            return "JourListBean{" +
+                    "CLASS='" + CLASS + '\'' +
+                    ", SALETIME='" + SALETIME + '\'' +
                     ", PAYSTS='" + PAYSTS + '\'' +
+                    ", GMCHINENO='" + GMCHINENO + '\'' +
                     ", TRANTIME='" + TRANTIME + '\'' +
                     ", TRANDATE='" + TRANDATE + '\'' +
                     ", MERNAME='" + MERNAME + '\'' +
                     ", AMOUNT=" + AMOUNT +
-                    ", PAYFLAG='" + PAYFLAG + '\'' +
-                    ", MCHID='" + MCHID + '\'' +
+                    ", SCANWAY='" + SCANWAY + '\'' +
                     ", TRANTYPE='" + TRANTYPE + '\'' +
+                    ", MCHID='" + MCHID + '\'' +
+                    ", RMK='" + RMK + '\'' +
                     ", PAYWAY='" + PAYWAY + '\'' +
-                    ", MEMNO='" + MEMNO + '\'' +
+                    ", TOTAL_FEE=" + TOTAL_FEE +
+                    ", DEVNO='" + DEVNO + '\'' +
+                    ", HSORDER_ID='" + HSORDER_ID + '\'' +
+                    ", MCHINENO='" + MCHINENO + '\'' +
+                    ", HSORDERID='" + HSORDERID + '\'' +
+                    ", OPERATERNO='" + OPERATERNO + '\'' +
                     '}';
         }
-    }
-
-    @Override
-    public String toString() {
-        return "BillEntity{" +
-                "varList=" + varList +
-                '}';
     }
 }

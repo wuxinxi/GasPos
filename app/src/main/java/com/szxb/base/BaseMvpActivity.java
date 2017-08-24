@@ -35,7 +35,7 @@ public abstract class BaseMvpActivity<T extends BasePresenter> extends BaseActiv
     }
 
     @Override
-    public void onSuccess(String str) {
+    public void onSuccess(int what,String str) {
 
     }
 
@@ -45,7 +45,7 @@ public abstract class BaseMvpActivity<T extends BasePresenter> extends BaseActiv
     }
 
     @Override
-    public void onFail(String str) {
+    public void onFail(int what,String str) {
 
     }
 

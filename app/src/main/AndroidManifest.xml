@@ -43,7 +43,7 @@
 
 
         <activity
-            android:name=".module.bill.BillActivity"
+            android:name=".module.bill.BillActivity2"
             android:screenOrientation="reverseLandscape" />
 
         <activity

@@ -3,7 +3,7 @@ package com.szxb.utils;
 
 public class Config {
 
-        public static final String SCANPAY_URL = "http://120.24.212.72:8080/bippay/interaction/hsScanPay";
+    public static final String SCANPAY_URL = "http://120.24.212.72:8080/bippay/interaction/hsScanPay";
 
     public static final String QUERY_URL = "http://139.199.158.253:8080/bippay/interaction/queryorder";
 

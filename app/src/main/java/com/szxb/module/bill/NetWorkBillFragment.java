@@ -12,8 +12,8 @@ import com.szxb.adapter.adapter.BIllAdapter;
 import com.szxb.base.BaseFragment;
 import com.szxb.db.sp.FetchAppConfig;
 import com.szxb.entity.BillEntity;
-import com.szxb.utils.Config;
 import com.szxb.utils.DateUtil;
+import com.szxb.utils.comm.Constant;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +32,7 @@ import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
  * TODO:一句话描述
  */
 
-public class NetWorkBillFragment extends BaseFragment<BillPresenter> implements DatePickerDialog.OnDateSetListener, BillView<BillEntity.VarListBean> {
+public class NetWorkBillFragment extends BaseFragment<BillPresenter> implements DatePickerDialog.OnDateSetListener, BillView<BillEntity.JourListBean> {
 
     static String ARG_PAGE = "ARG_PAGE";
 
@@ -55,7 +55,7 @@ public class NetWorkBillFragment extends BaseFragment<BillPresenter> implements 
 
     private BIllAdapter mAdapter;
 
-    private List<BillEntity.VarListBean> listBeanList = new ArrayList<>();
+    private List<BillEntity.JourListBean> listBeanList = new ArrayList<>();
 
     public static NetWorkBillFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -96,7 +96,7 @@ public class NetWorkBillFragment extends BaseFragment<BillPresenter> implements 
     protected void initData() {
         map.put("BEGINTIME", DateUtil.getCurrentDate("yyyy-MM-dd"));
         map.put("ENDTIME", DateUtil.getCurrentDate("yyyy-MM-dd"));
-        mPresenter.requestData(Config.BILLNORMAL, map, Config.QUERY_URL);
+        mPresenter.requestData(Constant.BILLNORMAL, map, Constant.QUERY_URL);
     }
 
     @OnClick({R.id.startTime, R.id.endTime, R.id.search})
@@ -136,17 +136,17 @@ public class NetWorkBillFragment extends BaseFragment<BillPresenter> implements 
     }
 
     @Override
-    public void loadSuccess(List<BillEntity.VarListBean> billLists) {
+    public void loadSuccess(List<BillEntity.JourListBean> billLists) {
 
     }
 
     @Override
-    public void loadRefreshSuccess(List<BillEntity.VarListBean> billLists) {
+    public void loadRefreshSuccess(List<BillEntity.JourListBean> billLists) {
 
     }
 
     @Override
-    public void loadMoreSuccess(List<BillEntity.VarListBean> billLists) {
+    public void loadMoreSuccess(List<BillEntity.JourListBean> billLists) {
 
     }
 }

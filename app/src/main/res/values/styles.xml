@@ -109,9 +109,20 @@
 
 
     //Dialog
-    <style name="testStyle" parent="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
+
+    <style name="testStyle" parent="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
         <item name="android:windowBackground">@mipmap/ic_bg</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <style name="BillItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+    </style>
+
 </resources>
