@@ -1,18 +1,27 @@
 package com.szxb.module.member;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.szxb.R;
 import com.szxb.base.BaseMvpActivity;
-import com.szxb.entity.HomeInfoEntity;
+import com.szxb.db.sp.FetchAppConfig;
+import com.szxb.entity.SeriaInformation;
 import com.szxb.utils.Util;
+import com.szxb.utils.comm.Constant;
+import com.szxb.utils.comm.UrlComm;
+import com.szxb.utils.tip.Tip;
+import com.szxb.widget.WaitDialog;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -24,7 +33,7 @@ import butterknife.OnClick;
  * TODO:一句话描述
  */
 @Route(path = "/gas/member")
-public class MemberActivity extends BaseMvpActivity implements View.OnLongClickListener {
+public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements View.OnLongClickListener, WaitDialog.OnDialogListener {
 
     @BindView(R.id.num_del)
     Button numDel;
@@ -38,9 +47,10 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
     private boolean selectUserName = true;
     private String temUserName;
     private String temUserPsw;
+    private WaitDialog mDialog;
 
     @Autowired
-    HomeInfoEntity infoEntity;
+    SeriaInformation infoEntity;
 
     private int[] buttons = {R.id.num_0, R.id.num_1, R.id.num_2, R.id.num_3, R.id.num_4,
             R.id.num_5, R.id.num_6, R.id.num_7, R.id.num_8, R.id.num_9};
@@ -49,6 +59,20 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
     protected int layoutID() {
         return R.layout.activity_member;
     }
+
+    @Override
+    protected Map<String, Object> getRequestParams() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("mchid", FetchAppConfig.mchId());
+        map.put("tel", temUserName);
+        return map;
+    }
+
+    @Override
+    protected MemberPresenter getChildPresenter() {
+        return new MemberPresenter(this);
+    }
+
 
     @Override
     protected void initView() {
@@ -75,14 +99,13 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
                 }
             });
         }
-
         numDel.setOnLongClickListener(this);
     }
 
-
     @Override
     protected void initData() {
-
+        mDialog = new WaitDialog();
+        mDialog.setCloseListener(this);
     }
 
     @OnClick({R.id.num_del, R.id.num_determine, R.id.userName, R.id.userPsw, R.id.temp})
@@ -93,14 +116,13 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
                 else Util.delNum(userPsw);
                 break;
             case R.id.num_determine:
-
                 String name = userName.getText().toString().trim();
-                String psw = userPsw.getText().toString().trim();
-
-                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(psw))
-                    Toast.makeText(this, "手机号或密码不能为空!", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(name))
+                    Tip.show(getApplicationContext(), "手机号不能为空!", false);
                 else {
-                    next();
+                    numDetermine.setEnabled(false);
+                    showDialog();
+                    mPresenter.requestData(Constant.MEMBER_LOGIN_WHAT, getRequestParams(), UrlComm.getInstance().MEMBERLOGINURL());
                 }
                 break;
             case R.id.userName:
@@ -114,16 +136,33 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
                 userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, R.mipmap.hline, 0);
                 break;
             case R.id.temp:
-                next();
+                infoEntity.setMemnerNo("1");
+                next("1");
                 break;
             default:
                 break;
         }
     }
 
-    private void next() {
+
+    @Override
+    public void onSuccess(int what, String str) {
+        //会员价格字段改为会员账号
+        infoEntity.setMemnerNo(temUserName);
+        next("0");
+    }
+
+    @Override
+    public void onFail(int what, boolean isOK, String str) {
+        numDetermine.setEnabled(true);
+        closeDialog();
+        Tip.show(getApplicationContext(), str, false);
+    }
+
+    private void next(String status) {
         ARouter.getInstance().build("/gas/order")
                 .greenChannel()
+                .withString("status", status)
                 .withParcelable("infoEntity", infoEntity)
                 .navigation();
         finish();
@@ -134,5 +173,28 @@ public class MemberActivity extends BaseMvpActivity implements View.OnLongClickL
         if (selectUserName) userName.setText("");
         else userPsw.setText("");
         return true;
+    }
+
+
+    private void showDialog() {
+        FragmentTransaction mFragTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("img");
+        if (fragment != null) {
+            mFragTransaction.remove(fragment);
+        }
+        mDialog.show(mFragTransaction, "img");
+    }
+
+    private void closeDialog() {
+        if (mDialog != null && mDialog.isAdded()) {
+            mPresenter.cancelBySign(Constant.MEMBER_LOGIN_WHAT);
+            mDialog.disDialog();
+        }
+    }
+
+    @Override
+    public void close() {
+        numDetermine.setEnabled(true);
+        closeDialog();
     }
 }

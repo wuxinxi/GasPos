@@ -1,84 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@mipmap/ic_bg"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/loginBlock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="70dp"
-        android:layout_marginRight="70dp"
-        android:background="@drawable/login_block"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/userNo"
-            style="@style/LoginEditStyle"
-            android:drawableLeft="@mipmap/ic_userno"
-            android:hint="@string/userNo"
-            android:inputType="number" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/line" />
-
-        <EditText
-            android:id="@+id/userName"
-            style="@style/LoginEditStyle"
-            android:drawableLeft="@mipmap/ic_username"
-            android:hint="@string/userName"
-            android:inputType="textVisiblePassword" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/line" />
-
-        <EditText
-            android:id="@+id/userPsw"
-            style="@style/LoginEditStyle"
-            android:drawableLeft="@mipmap/ic_userpsw"
-            android:hint="@string/userPsw"
-            android:inputType="textPassword" />
-    </LinearLayout>
-
-    <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
-        android:id="@+id/progress1"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:visibility="gone"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        app:mlpb_progress_color="@color/colorAccent"
-        app:mlpb_progress_stoke_width="3dp" />
-
+    <include layout="@layout/toolbar_title" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/loginBlock"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonLogin"
-            style="@style/LoginButtonStyle"
-            android:layout_marginLeft="70dp"
-            android:layout_marginRight="10dp"
-            android:text="@string/buttonLogin" />
+        <include layout="@layout/numkeyboard_view" />
 
-        <Button
-            android:id="@+id/buttonClose"
-            style="@style/LoginButtonStyle"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="70dp"
-            android:text="@string/buttonClose" />
-    </LinearLayout>
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/login_block"
+            android:gravity="center"
+            android:orientation="vertical">
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/ip"
+                style="@style/LoginEditStyle"
+                android:drawableLeft="@mipmap/ic_ip"
+                android:gravity="center_vertical"
+                android:hint="@string/ip"
+                android:text="112.74.102.125" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/line" />
+
+            <TextView
+                android:id="@+id/userName"
+                style="@style/LoginEditStyle"
+                android:drawableLeft="@mipmap/ic_username"
+                android:gravity="center_vertical"
+                android:hint="@string/userName"
+                android:text="100100100101" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/line" />
+
+            <TextView
+                android:id="@+id/userNo"
+                style="@style/LoginEditStyle"
+                android:drawableLeft="@mipmap/ic_userno"
+                android:gravity="center_vertical"
+                android:hint="@string/userNo"
+                android:inputType="number"
+                android:text="120" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/line" />
+
+
+            <TextView
+                android:id="@+id/userPsw"
+                style="@style/LoginEditStyle"
+                android:drawableLeft="@mipmap/ic_userpsw"
+                android:gravity="center_vertical"
+                android:hint="@string/userPsw"
+                android:inputType="numberPassword"
+                android:text="111111" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@drawable/line" />
+
+            <Button
+                android:id="@+id/login"
+                style="@style/LoginButtonStyle"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="登录" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

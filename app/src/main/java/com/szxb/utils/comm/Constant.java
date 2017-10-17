@@ -9,33 +9,20 @@ package com.szxb.utils.comm;
 
 public class Constant {
 
-    public static final String URL = "http://120.24.212.72:8080";
-
-    //登录
-    public static final String LOGIN_URL = URL + "/bippay/interaction/emp_Login";
-
-    //支付
-    public static final String PAY_URL = URL + "/bippay/interaction/hsScanPay";
-
-    //现金、银行卡、IC卡交易
-    public static final String CASH_URL = URL + "/bippay/interaction/transfer";
-
-    //查询接口
-    public static final String QUERY_URL = URL + "/bippay/interaction/scan_Orderquery";
-
-    //退款接口
-    public static final String REFUND_URL = URL + "/bippay/interaction/hsReturn";
-
-    //交易记录
-    public static final String ORDER_URL = URL + "/bippay/interaction/jourList";
-
-
-    public static final int REQUESTQRCODE_WHAT = 1;
+    public static final int REQUESTQRCODE_WHAT = 1;//二维码
     public static final int LOOP_WHAT = 2;
-
-    public static final int REFUND_WHAT = 6;
-    public static final int QUERY_WHAT = 7;
+    public static final int REFUND_WHAT = 6;//退款
+    public static final int QUERY_WHAT = 11;//查询
     public static final int BILLNORMAL = 3;//正常加载
     public static final int BILLREFRESH = 4;//刷新
     public static final int BILLMORE = 5;//加载更多
+    public static final int CASH_WHAT = 6;//现金交易
+    public static final int MEMBER_LOGIN_WHAT = 7;//会员登录
+    public static final int LOGIN_WHAT = 8;//会员登录
+    public static final int SHORT_WHAT = 9;//发起短码付
+    public static final int SHORT_QUERY_WHAT = 10;//短码结果单次查询
+    public static final int SHORT_CANCEL_WHAT = 11;//短码撤销
+    public static final int ALERT_CHECK_WHAT = 12;//订单查询
+    public static final int ALERT_BACK_WHAT = 13;//back
+    public static final int TIP_WHAT = 14;//tip
 }

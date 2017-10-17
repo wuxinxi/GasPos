@@ -1,22 +1,27 @@
 package com.szxb.module.home;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.szxb.App;
 import com.szxb.R;
 import com.szxb.adapter.adapter.HomeAdapter;
 import com.szxb.base.BaseActivity;
-import com.szxb.db.dao.HomeInfoEntityDao;
+import com.szxb.db.dao.SeriaInformationDao;
 import com.szxb.db.manager.DBCore;
 import com.szxb.db.manager.DBManager;
-import com.szxb.entity.HomeInfoEntity;
+import com.szxb.entity.SeriaInformation;
 import com.szxb.interfaces.OnItemClick;
-import com.szxb.module.bill.BillActivity;
+import com.szxb.module.bill.BillActivity2;
 import com.szxb.module.setting.SettingsActivity;
 import com.szxb.task.TaskRotationService;
 import com.szxb.utils.rx.RxBus;
@@ -43,7 +48,7 @@ import rx.schedulers.Schedulers;
  * TODO:一句话描述
  */
 @Route(path = "/gas/home")
-public class HomeActivity extends BaseActivity implements OnItemClick {
+public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLongClickListener {
 
     Intent intent;
     Subscription sub;
@@ -61,6 +66,12 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
     Button currentCheck;
     @BindView(R.id.checkBack)
     Button checkBack;
+    @BindView(R.id.first_short_code)
+    TextView firstShortCode;
+    @BindView(R.id.second_short_code)
+    TextView secondShortCode;
+    @BindView(R.id.three_short_code)
+    TextView threeShortCode;
 
     @BindView(R.id.currentCheckView)
     Button currentCheckView;
@@ -68,20 +79,23 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
     Button checkBackView;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.short_layout)
+    LinearLayout shortLayout;
 
     private HomeAdapter mAdapter;
 
-    private List<HomeInfoEntity> infoEntitiesList = new ArrayList<>();
+    private List<SeriaInformation> infoEntitiesList = new ArrayList<>();
 
     private int selectPosition = 0;
-
     private int mCurrentPosition = -1;
 
     //Activity的状态，是否在前台
     private boolean isVisible = true;
+    private SeriaInformation infoEntity = null;
+    private static Activity activity;
 
-    private HomeInfoEntity infoEntity = null;
-
+    //短码付选择，1,2,3
+    private int SHORT_TEXT_SELECT = -1;
 
     @Override
     protected int layoutID() {
@@ -93,45 +107,50 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
         //没有toolbar所以要注释掉父类的initView
         //super.initView();
         intent = new Intent(HomeActivity.this, TaskRotationService.class);
-        startService(intent);
+//        startService(intent);
         mAdapter = new HomeAdapter(getApplicationContext(), R.layout.view_item_home, infoEntitiesList);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
 
         mAdapter.setItemClick(this);
-        query(5);
+        query(3);
 
+        firstShortCode.setOnLongClickListener(this);
+        secondShortCode.setOnLongClickListener(this);
+        threeShortCode.setOnLongClickListener(this);
+
+        activity = this;
     }
 
     @Override
     protected void initData() {
-
-        sub = RxBus.getInstance().toObservable(HomeInfoEntity.class)
-                .filter(new Func1<HomeInfoEntity, Boolean>() {
+        sub = RxBus.getInstance().toObservable(SeriaInformation.class)
+                .filter(new Func1<SeriaInformation, Boolean>() {
                     @Override
-                    public Boolean call(HomeInfoEntity infoEntity) {
+                    public Boolean call(SeriaInformation infoEntity) {
                         //如果数据库不存在则往下走储存到数据库，否则直接过滤
                         return DBManager.query(infoEntity);
                     }
-                }).flatMap(new Func1<HomeInfoEntity, Observable<Long>>() {
+                }).flatMap(new Func1<SeriaInformation, Observable<Long>>() {
                     @Override
-                    public Observable<Long> call(HomeInfoEntity infoEntity) {
-                        HomeInfoEntityDao homeInfoEntityDao = DBCore.getDaoSession().getHomeInfoEntityDao();
+                    public Observable<Long> call(SeriaInformation infoEntity) {
+                        SeriaInformationDao homeInfoEntityDao = DBCore.getDaoSession().getSeriaInformationDao();
                         return Observable.just(homeInfoEntityDao.insert(infoEntity));
                     }
-                }).map(new Func1<Long, List<HomeInfoEntity>>() {
+                }).map(new Func1<Long, List<SeriaInformation>>() {
                     @Override
-                    public List<HomeInfoEntity> call(Long aLong) {
+                    public List<SeriaInformation> call(Long aLong) {
                         return DBManager.query();
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<HomeInfoEntity>>() {
+                .subscribe(new Action1<List<SeriaInformation>>() {
                     @Override
-                    public void call(List<HomeInfoEntity> infoEntities) {
+                    public void call(List<SeriaInformation> infoEntities) {
                         //当前选择为实时时方可实时更新UI
+                        mCurrentPosition = -1;
                         mAdapter.setItemChecked(-1);
                         infoEntity = null;
                         //如果选择的是实时记录并且当前Activity在前台显示则更新UI
@@ -145,7 +164,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
 
     }
 
-
     /**
      * queryRecord:交易记录
      * setting：设置
@@ -155,7 +173,8 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
      *
      * @param view
      */
-    @OnClick({R.id.queryRecord, R.id.setting, R.id.scanNoMember, R.id.scanMember, R.id.currentCheck, R.id.checkBack})
+    @OnClick({R.id.queryRecord, R.id.setting, R.id.scanNoMember, R.id.scanMember, R.id.currentCheck,
+            R.id.checkBack, R.id.first_short_code, R.id.second_short_code, R.id.three_short_code})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.setting:
@@ -166,28 +185,17 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
                         .navigation();
                 break;
             case R.id.scanNoMember:
-                if (infoEntity == null)
-                    Tip.show(getApplicationContext(), getResources().getString(R.string.chose_tip), false);
-                else {
-                    ARouter.getInstance().build("/gas/order")
-                            .withBoolean("status", false)
-                            .withParcelable("infoEntity", infoEntity)
-                            .navigation(this, 0x11);
-                }
+
                 break;
             case R.id.scanMember:
-                if (infoEntity == null)
-                    Tip.show(getApplicationContext(), getResources().getString(R.string.chose_tip), false);
-                else {
-                    ARouter.getInstance().build("/gas/member")
-                            .withBoolean("status", true)
-                            .withParcelable("infoEntity", infoEntity)
-                            .navigation(this, 0x11);
-                }
+                //会员
+                if (App.getPosManager().getSupportMember())
+                    nextActivity("/gas/member", 0x11);
+                else Tip.show(getApplicationContext(), "请先开启会员支付功能", false);
                 break;
             case R.id.currentCheck:
                 selectPosition(0);
-                query(5);
+                query(3);
                 break;
             case R.id.checkBack:
                 selectPosition(1);
@@ -196,13 +204,44 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
             case R.id.queryRecord:
                 ARouter.getInstance()
                         .build("/gas/verify")
-                        .withString("activity", BillActivity.class.getSimpleName())
+                        .withString("activity", BillActivity2.class.getSimpleName())
                         .withTransition(R.anim.base_slide_right_in, R.anim.base_slide_remain)
                         .navigation();
+                break;
+            case R.id.first_short_code:
+                SHORT_TEXT_SELECT = 1;
+                nextActivity("/gas/short", 0x12, firstShortCode.getText().toString());
+                break;
+            case R.id.second_short_code:
+                SHORT_TEXT_SELECT = 2;
+                nextActivity("/gas/short", 0x12, secondShortCode.getText().toString());
+                break;
+            case R.id.three_short_code:
+                SHORT_TEXT_SELECT = 3;
+                nextActivity("/gas/short", 0x12, threeShortCode.getText().toString());
                 break;
             default:
                 break;
         }
+    }
+
+    private void nextActivity(String url, int requestCode) {
+        if (infoEntity == null) {
+            Tip.show(getApplicationContext(), getResources().getString(R.string.chose_tip), false);
+            return;
+        }
+        ARouter.getInstance().build(url)
+                .withParcelable("infoEntity", infoEntity)
+                .navigation(HomeActivity.this, requestCode);
+    }
+
+    private void nextActivity(String url, int requestCode, String shortCode) {
+        ARouter.getInstance().build(url)
+                .withString("short_code", shortCode)
+                .withParcelable("infoEntity", infoEntity)
+                .navigation(HomeActivity.this, requestCode);
+        Log.d("HomeActivity",
+                "nextActivity(HomeActivity.java:242)" + SHORT_TEXT_SELECT);
     }
 
     /**
@@ -210,12 +249,12 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
      * limit=5:实时信息
      */
     private void query(final int limit) {
-        Observable.create(new Observable.OnSubscribe<List<HomeInfoEntity>>() {
+        Observable.create(new Observable.OnSubscribe<List<SeriaInformation>>() {
             @Override
-            public void call(Subscriber<? super List<HomeInfoEntity>> subscriber) {
-                HomeInfoEntityDao dao = DBCore.getDaoSession().getHomeInfoEntityDao();
-                List<HomeInfoEntity> list = dao.queryBuilder()
-                        .orderDesc(HomeInfoEntityDao.Properties.Id)
+            public void call(Subscriber<? super List<SeriaInformation>> subscriber) {
+                SeriaInformationDao dao = DBCore.getDaoSession().getSeriaInformationDao();
+                List<SeriaInformation> list = dao.queryBuilder()
+                        .orderDesc(SeriaInformationDao.Properties.Id)
                         .limit(limit)
                         .build()
                         .list();
@@ -223,9 +262,9 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<HomeInfoEntity>>() {
+                .subscribe(new Action1<List<SeriaInformation>>() {
                     @Override
-                    public void call(List<HomeInfoEntity> infoEntities) {
+                    public void call(List<SeriaInformation> infoEntities) {
                         infoEntitiesList.clear();
                         infoEntitiesList.addAll(0, infoEntities);
                         mAdapter.notifyDataSetChanged();
@@ -233,19 +272,26 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        XBLog.d("call(HomeActivity.java:228)" + throwable.getMessage());
+                        Tip.show(getApplicationContext(), throwable.toString(), false);
+                        XBLog.d("call(HomeActivity.java:237)" + throwable.getMessage());
                     }
                 });
     }
 
     private void selectPosition(int position) {
+        mAdapter.setItemChecked(-1);
+        mCurrentPosition = -1;
+        infoEntity = null;
         switch (position) {
             case 0:
+                shortLayout.setVisibility(View.VISIBLE);
                 selectPosition = 0;
                 currentCheckView.setBackgroundResource(R.drawable.button_selected_left_shape);
                 checkBackView.setBackgroundResource(R.drawable.button_selected_left_shape_normal);
+
                 break;
             case 1:
+                shortLayout.setVisibility(View.GONE);
                 selectPosition = 1;
                 currentCheckView.setBackgroundResource(R.drawable.button_selected_left_shape_normal);
                 checkBackView.setBackgroundResource(R.drawable.button_selected_left_shape);
@@ -258,7 +304,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
 
     }
 
-
     @Override
     public void onItemClick(View view, int position) {
         if (position == mCurrentPosition) {
@@ -269,44 +314,89 @@ public class HomeActivity extends BaseActivity implements OnItemClick {
         infoEntity = infoEntitiesList.get(position);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
             case 0x11:
                 selectPosition(0);
-                query(5);
+                query(3);
+                break;
+            case 0x12:
+                if (data != null)
+                    switch (SHORT_TEXT_SELECT) {
+                        case 1:
+                            firstShortCode.setText(data.getStringExtra("short_code"));
+                            break;
+                        case 2:
+                            secondShortCode.setText(data.getStringExtra("short_code"));
+                            break;
+                        case 3:
+                            threeShortCode.setText(data.getStringExtra("short_code"));
+                            break;
+                        default:
+
+                            break;
+                    }
                 break;
             default:
                 break;
         }
     }
 
+    public static Activity getThis() {
+        return activity;
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("HomeActivity",
+                "onPause(HomeActivity.java:362)onPause");
+        mCurrentPosition = -1;
         isVisible = false;
+
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        Log.d("HomeActivity",
+                "onDestroy(HomeActivity.java:372)onRestart");
         isVisible = true;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("HomeActivity",
+                "onDestroy(HomeActivity.java:376)onDestroy");
         if (intent != null) {
             stopService(intent);
         }
-
-        if (!sub.isUnsubscribed()&&!sub.isUnsubscribed()) {
+        if (!sub.isUnsubscribed()) {
             sub.unsubscribe();
         }
     }
 
 
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.first_short_code:
+                firstShortCode.setText("");
+                break;
+            case R.id.second_short_code:
+                secondShortCode.setText("");
+                break;
+            case R.id.three_short_code:
+                threeShortCode.setText("");
+                break;
+            default:
+
+                break;
+        }
+        return false;
+    }
 }

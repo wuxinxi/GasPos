@@ -15,7 +15,4 @@ public interface BillView<T> extends BaseView {
 
     void loadSuccess(List<T> billLists);
 
-    void loadRefreshSuccess(List<T> billLists);
-
-    void loadMoreSuccess(List<T> billLists);
 }

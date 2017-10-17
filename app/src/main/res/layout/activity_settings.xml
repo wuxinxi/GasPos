@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -45,11 +44,22 @@
 
                 <View style="@style/LintStyle" />
 
+                <TextView
+                    android:id="@+id/wifi"
+                    style="@style/SetTextStyle"
+                    android:drawableLeft="@mipmap/ic_wifi"
+                    android:text="@string/settings_wifi" />
+
+                <View
+                    style="@style/LintStyle"
+                    android:visibility="gone" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/ic_set_selector"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <TextView
                         style="@style/SetTextStyle"
@@ -63,6 +73,32 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
+                        android:textOff="Off"
+                        android:textOn="On"
+                        app:showText="true" />
+                </LinearLayout>
+
+                <View style="@style/LintStyle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ic_set_selector"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/SetTextStyle"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:drawableLeft="@mipmap/ic_me"
+                        android:text="@string/set_me_pay" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switchMember"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:checked="true"
                         android:textOff="Off"
                         android:textOn="On"
                         app:showText="true" />

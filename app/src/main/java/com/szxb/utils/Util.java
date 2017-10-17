@@ -2,13 +2,18 @@ package com.szxb.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.szxb.App;
 import com.szxb.R;
 
@@ -16,6 +21,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Locale;
 
 /**
@@ -52,6 +58,8 @@ public class Util {
     }
 
     public static Bitmap CreateCode(String str) {
+        if (TextUtils.isEmpty(str))
+            return BitmapFactory.decodeResource(App.getInstance().getResources(), R.mipmap.load_fail);
         Bitmap bitmap = null;
         BitMatrix matrix = null;
         try {
@@ -79,6 +87,53 @@ public class Util {
         return bitmap;
 
     }
+
+
+    public static Bitmap Create2DCode(String str, int width, int height) {
+        try {
+            Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
+            hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+            hints.put(EncodeHintType.MARGIN, 2);
+            BitMatrix matrix = new QRCodeWriter().encode(str, BarcodeFormat.QR_CODE, width, height);
+            matrix = deleteWhite(matrix);//删除白边
+            width = matrix.getWidth();
+            height = matrix.getHeight();
+            int[] pixels = new int[width * height];
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    if (matrix.get(x, y)) {
+                        pixels[y * width + x] = Color.BLACK;
+                    } else {
+                        pixels[y * width + x] = Color.WHITE;
+                    }
+                }
+            }
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+            return bitmap;
+        } catch (Exception e) {
+            return BitmapFactory.decodeResource(App.getInstance().getResources(), R.mipmap.load_fail);
+        }
+    }
+
+
+    private static BitMatrix deleteWhite(BitMatrix matrix) {
+        int[] rec = matrix.getEnclosingRectangle();
+        int resWidth = rec[2] + 1;
+        int resHeight = rec[3] + 1;
+
+        BitMatrix resMatrix = new BitMatrix(resWidth, resHeight);
+        resMatrix.clear();
+        for (int i = 0; i < resWidth; i++) {
+            for (int j = 0; j < resHeight; j++) {
+                if (matrix.get(i + rec[0], j + rec[1]))
+                    resMatrix.set(i, j);
+            }
+        }
+        return resMatrix;
+    }
+
 
     /**
      * 检查字符串是否可以转化成数字
@@ -224,5 +279,34 @@ public class Util {
             return;
         result = result.substring(0, result.length() - 1);
         textView.setText(result);
+    }
+
+
+    public static String bcd2Str(byte[] bytes) {
+        StringBuffer temp = new StringBuffer(bytes.length * 2);
+        for (int i = 0; i < bytes.length; i++) {
+            temp.append((byte) ((bytes[i] & 0xf0) >>> 4));
+            temp.append((byte) (bytes[i] & 0x0f));
+        }
+        return temp.toString().substring(0, 1).equalsIgnoreCase("0") ? temp
+                .toString().substring(1) : temp.toString();
+    }
+
+
+    //加油总量/100
+    public static String getFuelingUp(String fuelingUp) {
+        if (isNumber(fuelingUp)) {
+            double flu = (Double.valueOf(fuelingUp))/100;
+            return decimalFormat.format(flu);
+        }
+        return fuelingUp;
+    }
+
+    public static String getMoney(String money) {
+        if (isNumber(money)) {
+            double flu = (Double.valueOf(money))/100;
+            return decimalFormat.format(flu);
+        }
+        return money;
     }
 }

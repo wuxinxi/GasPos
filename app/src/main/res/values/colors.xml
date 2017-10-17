@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorGreen">#FF09ED3A</color>
+    <color name="colorGreen">#FF06DD75</color>
+    <color name="colorGreenPress">#FF2AC87C</color>
 
 
     <color name="transparent">#00000000</color>
-    <color name="transparent_">#20000000</color>
-    <color name="transparent_2">#5a000000</color>
 
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
@@ -22,8 +20,10 @@
     <color name="colorButtonPress">#FFE25157</color>
 
     <color name="colorSettingNormal">#B0B0A3</color>
-    <color name="colorSettingPress">#AAAAAA</color>
 
     <color name="color_num">#E2E2E2</color>
-    <color name="color_num_normal">#3F51B5</color>
+
+
+    <color name="load_success">#03a44e</color>
+    <color name="load_failure">#de0e26</color>
 </resources>

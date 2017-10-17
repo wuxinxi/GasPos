@@ -3,6 +3,7 @@ package com.szxb.module.login;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.szxb.App;
 import com.szxb.base.BasePresenter;
 
 import java.lang.ref.WeakReference;
@@ -16,29 +17,35 @@ import java.lang.ref.WeakReference;
 
 public class LoginPresenter extends BasePresenter {
 
-    private WeakReference<LoginActivity> weakReference;
+    private WeakReference<LoginZipActivity> weakReference;
 
-    public LoginPresenter(LoginActivity activity) {
-        weakReference = new WeakReference<LoginActivity>(activity);
+    public LoginPresenter(LoginZipActivity activity) {
+        weakReference = new WeakReference<LoginZipActivity>(activity);
     }
 
     @Override
     protected void onAllSuccess(int what, JSONObject result) {
-        LoginActivity activity = weakReference.get();
+        LoginZipActivity activity = weakReference.get();
         if (activity != null) {
 
             String rescode = result.getString("rescode");
             if (TextUtils.equals(rescode, "0000")) {
                 activity.onSuccess(what, "登录成功!");
-            } else activity.onFail(what, result.toString());
+            } else activity.onFail(what, false, result.toString());
 
         }
     }
 
     @Override
-    protected void onFail(int what, String failStr) {
-        LoginActivity activity = weakReference.get();
+    protected void onFail(int what, boolean isOK, String failStr) {
+        LoginZipActivity activity = weakReference.get();
         if (activity != null)
-            activity.onFail(what, failStr);
+            activity.onFail(what, isOK, failStr);
+    }
+
+    public void chechK21() {
+        if (!App.getPosManager().getInitK21()) {
+
+        }
     }
 }

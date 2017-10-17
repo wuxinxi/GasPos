@@ -9,10 +9,10 @@ import android.widget.Toast;
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.szxb.App;
 import com.szxb.R;
 import com.szxb.base.BaseActivity;
-import com.szxb.db.sp.FetchAppConfig;
-import com.szxb.module.bill.BillActivity;
+import com.szxb.module.bill.BillActivity2;
 import com.szxb.module.setting.SettingsActivity;
 import com.szxb.utils.MD5;
 import com.szxb.utils.Util;
@@ -39,10 +39,12 @@ public class VerifyActivity extends BaseActivity {
 
     private String pswString;
 
-    private int[] buttons = {R.id.num_0, R.id.num_1, R.id.num_2, R.id.num_3, R.id.num_4, R.id.num_5, R.id.num_6, R.id.num_7, R.id.num_8, R.id.num_9};
+    private int[] buttons = {R.id.num_0, R.id.num_1, R.id.num_2, R.id.num_3, R.id.num_4,
+            R.id.num_5, R.id.num_6, R.id.num_7, R.id.num_8, R.id.num_9};
 
     @Autowired
     String activity;
+
 
     @Override
     protected int layoutID() {
@@ -51,6 +53,7 @@ public class VerifyActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        super.initView();
         ARouter.getInstance().inject(this);
         super.initView();
         title.setText("安全效验");
@@ -74,19 +77,16 @@ public class VerifyActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.home, R.id.num_del, R.id.num_determine})
+    @OnClick({R.id.num_del, R.id.num_determine})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.home:
-                finishActivityFromRight();
-                break;
             case R.id.num_del:
                 Util.delNum(psw);
                 break;
             case R.id.num_determine:
                 String pswString = psw.getText().toString().trim();
-                if (TextUtils.equals(MD5.md5(pswString), FetchAppConfig.verifyCode())) {
-                    if (TextUtils.equals(activity, BillActivity.class.getSimpleName())) {
+                if (TextUtils.equals(MD5.md5(pswString), App.getPosManager().getVerifyCode())) {
+                    if (TextUtils.equals(activity, BillActivity2.class.getSimpleName())) {
                         Router.jumpL("/gas/bill");
                         finish();
                     } else if (TextUtils.equals(activity, SettingsActivity.class.getSimpleName())) {
@@ -95,6 +95,7 @@ public class VerifyActivity extends BaseActivity {
                     }
                 } else Toast.makeText(this, "安全码错误", Toast.LENGTH_SHORT).show();
                 break;
+
             default:
                 break;
         }

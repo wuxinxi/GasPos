@@ -15,7 +15,6 @@
         <include layout="@layout/numkeyboard_view" />
 
         <LinearLayout
-            android:id="@+id/loginBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -43,6 +42,7 @@
                 style="@style/LoginEditStyle"
                 android:drawableLeft="@mipmap/ic_userpsw"
                 android:gravity="center|left"
+                android:visibility="gone"
                 android:hint="@string/userPsw"
                 android:password="true" />
         </LinearLayout>

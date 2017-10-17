@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="120dp"
-    android:layout_marginBottom="20dp"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
+    android:layout_marginBottom="7dp"
+    android:layout_marginLeft="7dp"
+    android:layout_marginRight="7dp"
     app:cardCornerRadius="5dp"
-    app:cardElevation="10dp">
+    app:cardElevation="7dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,47 +23,54 @@
             <TextView
                 android:id="@+id/orderTime"
                 style="@style/BillItemStyle"
-                android:text="2017-08-22 15:30:30" />
+                android:gravity="center_vertical"
+                android:text="2017-08-22 15:30:30"
+                android:textColor="@color/colorBlack"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/orderNo"
                 style="@style/BillItemStyle"
                 android:background="@drawable/ic_order_shape"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:lines="1"
                 android:paddingLeft="10dp"
                 android:text="gas1024679558524"
                 android:textColor="@color/colorWhite" />
 
             <TextView
-                android:id="@+id/refundMoney"
                 style="@style/BillItemStyle"
-                android:text="0.00" />
+                android:text="0.00"
+                android:textColor="@color/colorText" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/orderMoney"
                 style="@style/BillItemStyle"
-                android:text="¥ 0.01" />
+                android:text="¥ 0.01"
+                android:textColor="@color/colorText" />
 
             <TextView
-                android:id="@+id/orderType"
                 style="@style/BillItemStyle"
                 android:background="@drawable/ic_order_wechat"
-                android:paddingLeft="10dp"
+                android:gravity="center"
                 android:text="微信"
                 android:textColor="@color/colorWhite" />
 
             <TextView
                 android:id="@+id/payStatus"
                 style="@style/BillItemStyle"
-                android:text="已支付" />
+                android:text="已支付"
+                android:textColor="@color/colorText" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,26 +80,26 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/refund"
                 style="@style/BillItemStyle"
                 android:background="@drawable/button_selector"
                 android:text="退款"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                android:visibility="gone" />
 
             <Button
-                android:id="@+id/queryRefund"
                 style="@style/BillItemStyle"
                 android:background="@drawable/button_selector"
                 android:paddingLeft="10dp"
                 android:text="退款查询"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorWhite"
+                android:visibility="gone" />
 
             <Button
-                android:id="@+id/print"
                 style="@style/BillItemStyle"
                 android:background="@drawable/button_selector"
-                android:text="打印"
-                android:textColor="@color/colorWhite" />
+                android:text="详情"
+                android:textColor="@color/colorWhite"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 

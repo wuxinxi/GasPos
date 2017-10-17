@@ -76,7 +76,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment imp
     }
 
     @Override
-    public void onFail(int what,String str) {
+    public void onFail(int what,boolean isOK, String str) {
 
     }
 

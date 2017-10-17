@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_title" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/colorGray">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/gasNo"
+                style="@style/PayLayoutTextLeft"
+                android:text="油枪号:00" />
+
+            <TextView
+                android:id="@+id/gasOils"
+                style="@style/PayLayoutTextLeft"
+                android:layout_below="@id/gasNo"
+                android:text="油品编码:0000" />
+
+            <TextView
+                android:id="@+id/transactionFlow"
+                style="@style/PayLayoutTextLeft"
+                android:layout_below="@id/gasOils"
+                android:layout_marginTop="20dp"
+                android:text="交易流水:000000000" />
+
+            <TextView
+                android:id="@+id/gasCapacity"
+                style="@style/PayLayoutTextLeft"
+                android:layout_below="@id/transactionFlow"
+                android:layout_marginBottom="20dp"
+                android:text="加油总量:0.00L" />
+
+            <TextView
+                android:id="@+id/gasPrice"
+                style="@style/PayLayoutTextRight"
+                android:layout_below="@id/gasCapacity"
+                android:text="油品单价:0.00" />
+
+            <TextView
+                android:id="@+id/gasTotal"
+                style="@style/PayLayoutTextRight"
+                android:layout_below="@+id/memberPrice"
+                android:text="加油总价:0.00" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/qr_code"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/item_block" />
+
+        <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+            android:id="@+id/progress"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            app:mlpb_progress_color="@color/colorAccent"
+            app:mlpb_progress_stoke_width="3dp" />
+
+        <TextView
+            android:id="@+id/select_pay_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="请选择支付方式"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/pay_result"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="50dp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp"
+        android:layout_marginTop="7dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/wechat_pay"
+            android:layout_width="145dp"
+            android:layout_height="45dp"
+            android:background="@drawable/selector_wechat"
+            android:text="微信支付"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/ali_pay"
+            android:layout_width="145dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/selector_ali"
+            android:text="支付宝支付"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/cash_pay"
+            android:layout_width="145dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/ic_cash_selector"
+            android:text="现金支付"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

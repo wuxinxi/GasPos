@@ -5,39 +5,28 @@
     <string name="gasNo">油枪</string>
     <string name="gasCapacity">加油量</string>
     <string name="gasMoney">总价</string>
-    <string name="gasMemberMoney">会员价</string>
     <string name="gasPayStatus">支付状态</string>
-    <string name="choseGasNo">选择油枪</string>
     <string name="queryRecord">交易记录</string>
     <string name="setting">设置</string>
 
-    <string name="payTitle">交易明细</string>
-
     <!--login-->
+    <string name="ip">服务器地址</string>
     <string name="userName">商户号</string>
     <string name="userPsw">密码</string>
-    <string name="newUserPsw">新密码</string>
-    <string name="buttonLogin">登陆</string>
-    <string name="buttonClose">取消</string>
 
-    <string name="ipAdress">服务器地址</string>
-    <string name="gasCount">油枪总数</string>
-    <string name="determine">确定</string>
-    <string name="eixt">退出程序</string>
-    <string name="mch_id">商户ID</string>
     <string name="local_checkBack">本地回查</string>
     <string name="current_check">实时记录</string>
     <string name="userNo">员工编号</string>
     <string name="userPhone">手机号</string>
     <string name="settings_comm">通用设置</string>
+    <string name="settings_wifi">WIFI</string>
     <string name="settings">设置</string>
     <string name="check_update">检查更新</string>
     <string name="exit">退出应用</string>
-    <string name="set_pay">支付</string>
     <string name="set_clear_zero">抹零</string>
-    <string name="set_tr">交接班</string>
+    <string name="set_me_pay">会员支付</string>
     <string name="set_psw">修改安全码</string>
-    <string name="chose_tip">选择无效</string>
+    <string name="chose_tip">未选择订单</string>
     <string name="replease">交接班</string>
 
 </resources>

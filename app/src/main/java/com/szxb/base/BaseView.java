@@ -9,7 +9,7 @@ public interface BaseView {
 
     void onSuccess(int what,String str);
 
-    void onFail(int what,String str);
+    void onFail(int what,boolean isOK, String str);
 
     void onPaySuccess();
 }

@@ -1,11 +1,11 @@
 package com.szxb.module.order;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSONObject;
 import com.szxb.base.BasePresenter;
-import com.szxb.utils.Config;
-import com.yanzhenjie.nohttp.Logger;
+import com.szxb.utils.comm.Constant;
 
 import java.lang.ref.WeakReference;
 
@@ -16,46 +16,61 @@ import java.lang.ref.WeakReference;
  */
 public class TransactionPresenter extends BasePresenter {
 
-    private WeakReference<OrderActivity> weakReference;
+    private WeakReference<OrderZipActivity> weakReference;
 
-    public TransactionPresenter(OrderActivity activity) {
-        weakReference = new WeakReference<OrderActivity>(activity);
+    public TransactionPresenter(OrderZipActivity activity) {
+        weakReference = new WeakReference<OrderZipActivity>(activity);
     }
 
     @Override
     protected void onAllSuccess(int what, JSONObject result) {
-        Logger.d(result.toString());
-        OrderActivity activity = weakReference.get();
+        Log.d("TransactionPresenter",
+                "success(TransactionPresenter.java:27)" + result.toJSONString());
+        OrderZipActivity activity = weakReference.get();
         String rescode;
         if (activity != null) {
             switch (what) {
-                case Config.LOOP_WHAT:
+                case Constant.LOOP_WHAT:
                     activity.onPaySuccess();
                     break;
-                case Config.REQUESTQRCODE_WHAT:
+                case Constant.REQUESTQRCODE_WHAT:
                     rescode = result.getString("rescode");
                     if (TextUtils.equals(rescode, "00")) {
-                        if (TextUtils.equals(result.getString("result"), "success"))
-                            activity.onSuccess(what, result.getString("codeurl"));
-                        else activity.onFail(what, "result!=success\n" + result.toString());
+                        if (TextUtils.equals(result.getString("result"), "success")) {
+                            String codeUrl = result.getString("codeurl");
+                            if (!TextUtils.isEmpty(codeUrl)) {
+                                activity.onSuccess(what, codeUrl);
+                            } else activity.onFail(what, false, result.toJSONString());
+                        } else
+                            activity.onFail(what, false, "result!=success\n" + result.toString());
                     } else {
-                        activity.onFail(what, result.toString());
+                        activity.onFail(what, false, result.toString());
                     }
                     break;
-                case Config.QUERY_WHAT:
+                case Constant.QUERY_WHAT:
                     rescode = result.getString("rescode");
                     switch (rescode) {
                         case "0000":
+                            //手动查询支付成功
                             activity.onPaySuccess();
+                            cancelTimerTask();
                             break;
                         case "0001":
                             //支付中不做处理
-                            activity.onFail(what,"还在支付中!");
+                            activity.onFail(what, false, "暂未完成支付!");
                             break;
                         default:
-                            activity.onFail(what, result.toJSONString());
+                            activity.onFail(what, false, result.toJSONString());
                             break;
                     }
+                    break;
+                case Constant.CASH_WHAT:
+                    rescode = result.getString("rescode");
+                    if (rescode.equals("0000")) {
+                        activity.onSuccess(what, "提交成功");
+                    } else activity.onFail(what, false, "提交失败\n" + result.toJSONString());
+
+                    activity.onSuccess(what, result.toJSONString());
                     break;
                 default:
 
@@ -66,9 +81,9 @@ public class TransactionPresenter extends BasePresenter {
     }
 
     @Override
-    protected void onFail(int what, String failStr) {
-        OrderActivity activity = weakReference.get();
+    protected void onFail(int what, boolean isOK, String failStr) {
+        OrderZipActivity activity = weakReference.get();
         if (activity != null)
-            activity.onFail(what, failStr);
+            activity.onFail(what, isOK, failStr);
     }
 }

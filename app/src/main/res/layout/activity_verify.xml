@@ -13,9 +13,9 @@
         android:layout_margin="20dp"
         android:background="@drawable/edit_shape"
         android:enabled="false"
-
         android:inputType="numberPassword"
-        android:lines="1" />
+        android:lines="1"
+        android:textSize="24sp" />
 
     <include layout="@layout/numkeyboard_view" />
 </LinearLayout>

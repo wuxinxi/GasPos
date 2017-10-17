@@ -19,6 +19,11 @@ android {
                 arguments = [moduleName: project.getName()]
             }
         }
+
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
     }
     buildTypes {
         release {
@@ -30,7 +35,7 @@ android {
 
 
     greendao {
-        schemaVersion 2
+        schemaVersion 4
         daoPackage 'com.szxb.db.dao'
         targetGenDir 'src/main/java'
     }
@@ -57,10 +62,10 @@ dependencies {
     compile rootProject.ext.dependencies["rxjava"]
     compile rootProject.ext.dependencies["greendao"]
     compile rootProject.ext.dependencies["GreenDaoUpgradeHelper"]
-    compile rootProject.ext.dependencies["picasso"]
-    compile rootProject.ext.dependencies["bga-refreshlayout"]
     compile rootProject.ext.dependencies["datetimepicker"]
     compile rootProject.ext.dependencies["arouter-api"]
     annotationProcessor rootProject.ext.dependencies["arouter-compiler"]
     compile rootProject.ext.dependencies["gson"]
+    compile rootProject.ext.dependencies["crashreport"]
+    compile rootProject.ext.dependencies["nativecrashreport"]
 }

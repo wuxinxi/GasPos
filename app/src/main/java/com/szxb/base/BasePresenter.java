@@ -1,10 +1,11 @@
 package com.szxb.base;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
-import com.szxb.utils.Config;
 import com.szxb.utils.comm.Constant;
+import com.szxb.utils.interceptor.MainLooper;
 import com.yanzhenjie.nohttp.RequestMethod;
 import com.yanzhenjie.nohttp.rest.CacheMode;
 import com.yanzhenjie.nohttp.rest.Response;
@@ -27,6 +28,8 @@ public abstract class BasePresenter {
     private Timer timer;
 
     private JsonRequest request;
+    private int count = 0;
+    private int ORDECCOUNT = 12;
 
     //是否取消轮训任务的标识符
     private boolean cancel = false;
@@ -34,9 +37,20 @@ public abstract class BasePresenter {
     public void requestData(int what, Map<String, Object> map, String url) {
         if (null == map)
             throw new IllegalArgumentException("no enity");
-        if (what == Config.LOOP_WHAT) {
+        if (what == Constant.LOOP_WHAT) {
             timer = new Timer();
-            timer.schedule(new LoopTimerTask(what, map, url), 2000, 2500);
+            timer.schedule(new LoopTimerTask(what, map, url, null), 2000, 2500);
+        } else {
+            requestPost(what, map, url);
+        }
+    }
+
+    public void requestData(int what, Map<String, Object> map, String url, TextView tip) {
+        if (null == map)
+            throw new IllegalArgumentException("no enity");
+        if (what == Constant.LOOP_WHAT) {
+            timer = new Timer();
+            timer.schedule(new LoopTimerTask(what, map, url, tip), 2000, 2500);
         } else {
             requestPost(what, map, url);
         }
@@ -46,23 +60,40 @@ public abstract class BasePresenter {
         int what;
         Map<String, Object> map;
         String url;
-        int count = 0;
+        TextView tip;
 
-        LoopTimerTask(int what, Map<String, Object> map, String url) {
+        LoopTimerTask(int what, Map<String, Object> map, String url, TextView tip) {
             this.what = what;
             this.map = map;
             this.url = url;
+            this.tip = tip;
         }
 
         @Override
         public void run() {
-            //有效期2分钟
-            if (count > 48) {
+            //有效期5分钟
+            if (count >= 12) {
                 cancel();
                 cancel = true;
+                Log.d("LoopTimerTask",
+                        "success(LoopTimerTask.java:64)停止轮训任务=");
+                return;
             }
+            Log.d("LoopTimerTask",
+                    "success(LoopTimerTask.java:85)" + ORDECCOUNT);
             requestPost(what, map, url);
+            if (tip != null) {
+                MainLooper.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tip.setText("支付倒计时:" + ORDECCOUNT + "次");
+                    }
+                });
+            }
+            Log.d("LoopTimerTask",
+                    "success(LoopTimerTask.java:69)第" + (count + 1) + "次轮训=");
             count++;
+            ORDECCOUNT--;
         }
     }
 
@@ -75,7 +106,7 @@ public abstract class BasePresenter {
             @Override
             public void success(int what, Response<JSONObject> response) {
                 Log.d("BasePresenter",
-                        "success(BasePresenter.java:71)" + response.get().toJSONString());
+                        "success(BasePresenter.java:82)" + response.get().toJSONString());
                 if (response.get() != null) {
                     if (what == Constant.LOOP_WHAT) {//轮训任务
                         String rescode = response.get().getString("rescode");
@@ -85,25 +116,34 @@ public abstract class BasePresenter {
                                 cancelTimerTask();
                                 break;
                             case "0001":
+                                if (count >= 12) {
+                                    //true表示轮训结束
+                                    onFail(what, true, "5分钟内未支付完成");
+                                }
                                 //支付中不做处理
                                 break;
                             default:
-                                //其他均为失败，并且取消轮训任务
-                                onFail(what, response.get().toJSONString());
-                                cancelTimerTask();
+                                onFail(what, false, response.get().toJSONString());
                                 break;
                         }
 
                     } else//其他网络任务
                         onAllSuccess(what, response.get());
                 } else {
-                    onFail(what, "请求服务器异常!");
+                    onFail(what, false, "请求服务器异常!");
                 }
             }
 
             @Override
             public void fail(int what, String e) {
-                onFail(what, "网络或服务器异常!");
+                if (what == Constant.LOOP_WHAT) {
+                    if (count >= 12) {
+                        onFail(what, true, "网络超时且轮训超时");
+                    } else onFail(what, false, "网络或服务器异常");
+                } else {
+                    onFail(what, false, "网络或服务器异常");
+                }
+
             }
         });
 
@@ -111,18 +151,28 @@ public abstract class BasePresenter {
 
     protected abstract void onAllSuccess(int what, JSONObject result);
 
-    protected abstract void onFail(int what, String failStr);
+    protected abstract void onFail(int what, boolean isOk, String failStr);
 
     public void cancelTimerTask() {
         if (timer != null) {
             Log.d("BasePresenter",
-                    "cancelTimerTask(BasePresenter.java:105)TimerTask stop ……");
+                    "success(BasePresenter.java:105)TimerTask stop ……");
+            count = 0;
+            ORDECCOUNT = 12;
             timer.cancel();
-            request.cancelBySign(Config.LOOP_WHAT);
+            timer = null;
+            request.cancelBySign(Constant.LOOP_WHAT);
             cancel = true;
+        } else {
+            Log.d("BasePresenter",
+                    "success(BasePresenter.java:127)time=null");
         }
     }
 
+
+    public void cancelBySign(int what) {
+        request.cancelBySign(what);
+    }
 
     //为了避免轮训任务与手动查询冲突
     //如果没有取消轮训任务不允许手动查询

@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".App"
@@ -17,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".module.login.LoginActivity"
+            android:name=".module.login.LoginZipActivity"
             android:screenOrientation="reverseLandscape"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -27,15 +28,19 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".module.home.HomeActivity"
-            android:screenOrientation="reverseLandscape" />
+        <!--<activity-->
+        <!--android:name=".module.home.HomeActivity"-->
+        <!--android:screenOrientation="reverseLandscape" />-->
 
         <receiver android:name=".task.BootBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".module.home.HomeActivity"
+            android:screenOrientation="reverseLandscape" />
 
         <activity
             android:name=".module.psw.VerifyActivity"
@@ -47,7 +52,7 @@
             android:screenOrientation="reverseLandscape" />
 
         <activity
-            android:name=".module.order.OrderActivity"
+            android:name=".module.order.OrderZipActivity"
             android:screenOrientation="reverseLandscape" />
 
         <activity
@@ -56,6 +61,10 @@
 
         <activity
             android:name=".module.setting.SettingsActivity"
+            android:screenOrientation="reverseLandscape" />
+
+        <activity
+            android:name=".module.shortpay.ShortPayActivity"
             android:screenOrientation="reverseLandscape" />
 
         <service android:name=".task.TaskRotationService" />

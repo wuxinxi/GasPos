@@ -1,7 +1,10 @@
 package com.szxb.db.manager;
 
-import com.szxb.db.dao.HomeInfoEntityDao;
-import com.szxb.entity.HomeInfoEntity;
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.szxb.db.dao.SeriaInformationDao;
+import com.szxb.entity.SeriaInformation;
 
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.query.CountQuery;
@@ -101,26 +104,29 @@ public class DBManager<T> {
     }
 
 
-    public static boolean query(HomeInfoEntity infoEntity) {
-        HomeInfoEntityDao dao = DBCore.getDaoSession().getHomeInfoEntityDao();
-        CountQuery<HomeInfoEntity> homeInfoEntityCountQuery = dao.queryBuilder()
-                .where(HomeInfoEntityDao.Properties.GasOrderNo.eq(infoEntity.getGasOrderNo()))
+    public static boolean query(SeriaInformation infoEntity) {
+        SeriaInformationDao dao = DBCore.getDaoSession().getSeriaInformationDao();
+        CountQuery<SeriaInformation> homeInfoEntityCountQuery = dao.queryBuilder()
+                .where(SeriaInformationDao.Properties.MachineOrderNo.eq(infoEntity.getMachineOrderNo()))
                 .buildCount();
         return homeInfoEntityCountQuery.count() <= 0;
     }
 
     public static void updatePayState(String orderNo) {
-        HomeInfoEntity data = DBCore.getDaoSession().queryBuilder(HomeInfoEntity.class).where(HomeInfoEntityDao.Properties.XbOrderNo.eq(orderNo)).build().unique();
+        if (TextUtils.isEmpty(orderNo)) return;
+        SeriaInformation data = DBCore.getDaoSession().queryBuilder(SeriaInformation.class).where(SeriaInformationDao.Properties.XbOrderNo.eq(orderNo)).build().unique();
         if (data == null) return;
         data.setGasPayStatus("已支付");
         DBCore.getASyncDaoSession().update(data);
+        Log.d("DBManager",
+                "updatePayState(DBManager.java:123)修改成功");
     }
 
-    public static List<HomeInfoEntity> query() {
-        HomeInfoEntityDao dao = DBCore.getDaoSession().getHomeInfoEntityDao();
+    public static List<SeriaInformation> query() {
+        SeriaInformationDao dao = DBCore.getDaoSession().getSeriaInformationDao();
         return dao.queryBuilder()
-                .orderDesc(HomeInfoEntityDao.Properties.Id)
-                .limit(5)
+                .orderDesc(SeriaInformationDao.Properties.Id)
+                .limit(3)
                 .list();
     }
 

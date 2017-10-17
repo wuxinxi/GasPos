@@ -3,7 +3,7 @@ package com.szxb;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.szxb.db.manager.DBCore;
-import com.szxb.entity.HomeInfoEntity;
+import com.szxb.entity.SeriaInformation;
 import com.szxb.utils.DateUtil;
 import com.szxb.utils.Util;
 
@@ -21,18 +21,16 @@ public class InsertTest {
 
     @Test
     public void insert() throws Exception {
-        HomeInfoEntity infoEntity = new HomeInfoEntity();
+        SeriaInformation infoEntity = new SeriaInformation();
         infoEntity.setGasNo("1");
-        infoEntity.setGasMemberMoney("10");
         infoEntity.setGasPayStatus("未支付");
         infoEntity.setGasMoney("20");
-        infoEntity.setGasCapacity("100L");
-        infoEntity.setGasUnitPrice("5");
-        infoEntity.setGasDate(DateUtil.getCurrentDate());
-        infoEntity.setGasOrderNo(Util.getOrderNo());
-        infoEntity.setGasMemberUnitPrice("10");
+        infoEntity.setFuelingUp("100L");
+        infoEntity.setPrices("5");
+        infoEntity.setCurrentTime(DateUtil.getCurrentDate());
+        infoEntity.setSeriaOrderNo(Util.getOrderNo());
         infoEntity.setXbOrderNo(Util.getOrderNo());
-        infoEntity.setGasTime(DateUtil.getCurrentTime());
-        DBCore.getDaoSession().getHomeInfoEntityDao().insert(infoEntity);
+        infoEntity.setTraStartTime(DateUtil.getCurrentTime());
+        DBCore.getDaoSession().getSeriaInformationDao().insert(infoEntity);
     }
 }

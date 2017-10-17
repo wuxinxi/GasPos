@@ -18,7 +18,7 @@ public class CallServer {
 
     private CallServer() {
         requestQueuequeue = NoHttp.newRequestQueue();
-        downloadQueue = NoHttp.newDownloadQueue();
+        downloadQueue = NoHttp.newDownloadQueue(1);
     }
 
     public synchronized static CallServer getHttpclient() {

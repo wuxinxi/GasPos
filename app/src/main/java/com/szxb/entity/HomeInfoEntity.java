@@ -27,7 +27,7 @@ public class HomeInfoEntity implements Parcelable {
     //单价
     private String gasUnitPrice;
 
-    //会员单价
+    //会员单价，已改为会员账号
     private String gasMemberUnitPrice;
 
     //加油升数

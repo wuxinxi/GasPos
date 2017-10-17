@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolBar"
+        layout="@layout/toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolBar"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <include layout="@layout/numkeyboard_view" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/login_block"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tip"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="未支付"
+                android:textColor="@color/colorAccent"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/short_code"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@color/colorWhite"
+                android:gravity="center"
+                android:hint="0000"
+                android:maxLength="4"
+                android:textSize="70sp" />
+
+
+            <Button
+                android:id="@+id/guaqi"
+                style="@style/LoginButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="挂起" />
+
+            <Button
+                android:id="@+id/goPay"
+                style="@style/LoginButtonStyle"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="发起支付" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

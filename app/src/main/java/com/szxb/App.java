@@ -3,12 +3,15 @@ package com.szxb;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.szxb.db.manager.DBCore;
 import com.szxb.utils.AppUtil;
+import com.szxb.utils.comm.IPosManager;
+import com.szxb.utils.comm.PosManager;
 import com.szxb.xblog.AndroidLogAdapter;
 import com.szxb.xblog.CsvFormatStrategy;
 import com.szxb.xblog.DiskLogAdapter;
 import com.szxb.xblog.FormatStrategy;
 import com.szxb.xblog.PrettyFormatStrategy;
 import com.szxb.xblog.XBLog;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import szxb.com.poslibrary.LibApp;
 
@@ -24,7 +27,7 @@ public class App extends LibApp {
     private static App instance = null;
 
     private static final String DB_NAME = "gasPos";
-
+    private static PosManager manager;
     private boolean saveLog = false;
 
     public static App getInstance() {
@@ -41,6 +44,12 @@ public class App extends LibApp {
         super.onCreate();
         instance = this;
         DBCore.init(this, DB_NAME);
+
+        CrashReport.initCrashReport(getApplicationContext(), "3356395c44", true);
+        CrashReport.putUserData(getApplicationContext(), "device_no", "00000000");
+
+        manager = new PosManager();
+        manager.loadFromPrefs();
         ARouter.openLog();     // 打印日志
         ARouter.openDebug();   // 开启调试模式(如果在InstantRun模式下运行，必须开启调试模式！线上版本需要关闭,否则有安全风险)
         ARouter.init(this);
@@ -63,7 +72,7 @@ public class App extends LibApp {
 //                            XBLog.d("run(App.java:70)" + "--->CockroachException:" + thread + "<---", throwable.getMessage());
 //                            Log.d("App",
 //                                    "run(App.java:70)" + throwable.getMessage());
-//                            Tip.show(App.this, "Exception Happend\n" + thread + "\n" + throwable.toString(), false);
+////                            Tip.show(App.this, "Exception Happend\n" + thread + "\n" + throwable.toString(), false);
 //                        } catch (Throwable e) {
 //
 //                        }
@@ -71,6 +80,15 @@ public class App extends LibApp {
 //                });
 //            }
 //        });
+    }
+
+
+    public static IPosManager getPosManager() {
+        if (manager == null) {
+            manager = new PosManager();
+            manager.loadFromPrefs();
+        }
+        return manager;
     }
 
     private void initLog() {

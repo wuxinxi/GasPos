@@ -42,14 +42,14 @@ public class Tip extends Toast {
         super(context);
     }
 
-    private static Toast showToast(Context context, CharSequence text, boolean isOk) {
+    private static Toast showToast(Context context, CharSequence text, boolean isOk,int duration) {
         Toast toast = new Toast(context);
         mInflater = LayoutInflater.from(context);
         View view = getView(isOk, text);
         toast.setView(view);
 
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.setDuration(LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 50, 0);
+        toast.setDuration(duration);
         return toast;
     }
 
@@ -75,7 +75,32 @@ public class Tip extends Toast {
      */
     public static void show(Context context, CharSequence text, boolean isOk) {
         if (mToast == null) {
-            mToast = showToast(context, text, isOk);
+            mToast = showToast(context, text, isOk,LENGTH_SHORT);
+            mToast.show();
+            firstTime = System.currentTimeMillis();
+        } else {
+            secondTime = System.currentTimeMillis();
+            if (text.equals(temStr)) {
+                if (secondTime - firstTime > Toast.LENGTH_SHORT) {
+                    mToast.show();
+                }
+            } else {
+                temStr = (String) text;
+                mToast.setView(getView(isOk, temStr));
+                mToast.show();
+            }
+        }
+        firstTime = secondTime;
+    }
+
+    /**
+     * @param context 上下文
+     * @param text    tip文本
+     * @param isOk    更新/检测/扣款成功或者失败
+     */
+    public static void show(Context context, CharSequence text, boolean isOk,int duration) {
+        if (mToast == null) {
+            mToast = showToast(context, text, isOk,duration);
             mToast.show();
             firstTime = System.currentTimeMillis();
         } else {

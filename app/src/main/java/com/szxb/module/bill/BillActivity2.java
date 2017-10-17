@@ -1,8 +1,10 @@
 package com.szxb.module.bill;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
@@ -12,9 +14,10 @@ import com.szxb.adapter.adapter.BIllAdapter;
 import com.szxb.base.BaseMvpActivity;
 import com.szxb.db.sp.FetchAppConfig;
 import com.szxb.entity.BillEntity;
-import com.szxb.interfaces.OnBillListener;
+import com.szxb.interfaces.OnItemClick;
 import com.szxb.utils.DateUtil;
 import com.szxb.utils.comm.Constant;
+import com.szxb.utils.comm.UrlComm;
 import com.szxb.utils.tip.Tip;
 
 import java.util.ArrayList;
@@ -25,7 +28,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.bingoogolapple.refreshlayout.BGARefreshLayout;
 
 import static com.yanzhenjie.nohttp.NoHttp.getContext;
 
@@ -37,18 +39,18 @@ import static com.yanzhenjie.nohttp.NoHttp.getContext;
  */
 @Route(path = "/gas/bill")
 public class BillActivity2 extends BaseMvpActivity<BillPresenter> implements DatePickerDialog.OnDateSetListener,
-        BillView<BillEntity.JourListBean>,  OnBillListener {
+        BillView<BillEntity.JourListBean>, SwipeRefreshLayout.OnRefreshListener, OnItemClick {
 
     @BindView(R.id.search)
-    TextView search;
+    Button search;
     @BindView(R.id.startTime)
     TextView startTime;
     @BindView(R.id.endTime)
     TextView endTime;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.bgaRefreshLayout)
-    BGARefreshLayout bgaRefreshLayout;
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout refreshLayout;
 
     private boolean selectStart = false;
     private DatePickerDialog datePickerDialog;
@@ -67,7 +69,7 @@ public class BillActivity2 extends BaseMvpActivity<BillPresenter> implements Dat
 
     @Override
     protected int layoutID() {
-        return R.layout.fragment_network;
+        return R.layout.activity_bill;
     }
 
     @Override
@@ -82,31 +84,35 @@ public class BillActivity2 extends BaseMvpActivity<BillPresenter> implements Dat
 
         GridLayoutManager manager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(manager);
-        mAdapter = new BIllAdapter(getContext(), R.layout.view_item_bill, getList());
+        mAdapter = new BIllAdapter(getContext(), R.layout.view_item_bill, listBeanList);
         recyclerView.setAdapter(mAdapter);
 
-        mAdapter.setPrint(this);
-        mAdapter.setQueryRefund(this);
-        mAdapter.setRefund(this);
-//
-//        BGAMoocStyleRefreshViewHolder refreshViewHolde = new BGAMoocStyleRefreshViewHolder(getApplicationContext(), true);
-//        refreshViewHolde.setOriginalImage(R.mipmap.ic_launcher_round);
-//        refreshViewHolde.setUltimateColor(R.color.colorPrimary);
-//        refreshViewHolde.setLoadingMoreText("加载中");
-//        bgaRefreshLayout.setRefreshViewHolder(refreshViewHolde);
-//        bgaRefreshLayout.setDelegate(this);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        refreshLayout.setOnRefreshListener(this);
+        mAdapter.setItemClick(this);
     }
 
     @Override
     protected void initData() {
-        mPresenter.requestData(Constant.BILLNORMAL, getRequestParams(), Constant.ORDER_URL);
+        initRequest();
+    }
+
+    private void initRequest() {
+        refreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshLayout.setRefreshing(true);
+                mPresenter.requestData(Constant.BILLNORMAL, getRequestParams(), UrlComm.getInstance().ORDERURL());
+            }
+        });
     }
 
     @Override
     protected Map<String, Object> getRequestParams() {
         map.put("mchid", FetchAppConfig.mchId());
-        map.put("begintime", "2017-08-21 23:00:00");
-        map.put("endtime", DateUtil.getCurrentDate("yyyy-MM-dd HH:mm:ss"));
+        map.put("begintime", startTime.getText().toString());
+        map.put("endtime", endTime.getText().toString());
         return map;
     }
 
@@ -122,7 +128,7 @@ public class BillActivity2 extends BaseMvpActivity<BillPresenter> implements Dat
                 selectTime();
                 break;
             case R.id.search:
-
+                initRequest();
                 break;
             default:
                 break;
@@ -140,27 +146,31 @@ public class BillActivity2 extends BaseMvpActivity<BillPresenter> implements Dat
     public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
         month = month + 1;
         if (selectStart) {
-            startTime.setText(year + "-" + month + "-" + day);
+            startTime.setText(year + "-" + String.format("%02d", month) + "-" + String.format("%02d", day));
         } else {
-            endTime.setText(year + "-" + month + "-" + day);
+            endTime.setText(year + "-" + String.format("%02d", month) + "-" + String.format("%02d", day));
         }
     }
 
 
     @Override
     public void loadSuccess(List<BillEntity.JourListBean> billLists) {
+        refreshLayout.setRefreshing(false);
+        listBeanList.clear();
         listBeanList.addAll(billLists);
         mAdapter.notifyDataSetChanged();
+        this.listBeanList = billLists;
     }
 
     @Override
-    public void loadRefreshSuccess(List<BillEntity.JourListBean> billLists) {
-
+    public void onSuccess(int what, String str) {
+        Tip.show(getApplicationContext(), "成功", true);
     }
 
     @Override
-    public void loadMoreSuccess(List<BillEntity.JourListBean> billLists) {
-
+    public void onFail(int what, boolean isOK, String str) {
+        refreshLayout.setRefreshing(false);
+        Tip.show(getApplicationContext(), str, false);
     }
 
     public List<BillEntity.JourListBean> getList() {
@@ -175,19 +185,14 @@ public class BillActivity2 extends BaseMvpActivity<BillPresenter> implements Dat
         return list;
     }
 
-
     @Override
-    public void onRefund(BillEntity.JourListBean varListBean,int position) {
-        Tip.show(getApplicationContext(), "position=" + position+"\n"+varListBean.toString(), true);
+    public void onRefresh() {
+        mPresenter.requestData(Constant.BILLNORMAL, getRequestParams(), UrlComm.getInstance().ORDERURL());
     }
 
     @Override
-    public void onQueryRefund(BillEntity.JourListBean varListBean,int position) {
-        Tip.show(getApplicationContext(), "position=" + position+"\n"+varListBean.toString(), true);
-    }
-
-    @Override
-    public void onPrint(BillEntity.JourListBean varListBean,int position) {
-        Tip.show(getApplicationContext(), "position=" + position+"\n"+varListBean.toString(), true);
+    public void onItemClick(View view, int position) {
+        BillEntity.JourListBean jourListBean = listBeanList.get(position);
+        Tip.show(getApplicationContext(), jourListBean.toString(), true);
     }
 }

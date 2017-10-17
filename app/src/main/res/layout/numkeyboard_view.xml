@@ -128,11 +128,10 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-
             <Button
-                android:id="@+id/num_0"
+                android:id="@+id/num_del"
                 style="@style/KeynumStyle"
-                android:text="0" />
+                android:text="DEL" />
 
             <View
                 android:layout_width="1dp"
@@ -140,10 +139,9 @@
                 android:background="@drawable/line" />
 
             <Button
-                android:id="@+id/num_del"
+                android:id="@+id/num_0"
                 style="@style/KeynumStyle"
-                android:text="DEL" />
-
+                android:text="0" />
 
             <View
                 android:layout_width="1dp"

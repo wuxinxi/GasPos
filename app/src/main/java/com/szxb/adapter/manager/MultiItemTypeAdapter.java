@@ -126,7 +126,6 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     public void setItemChecked(int position) {
         mBooleanArray.put(position, true);
-
         if (mLastCheckedPosition > -1) {
             mBooleanArray.put(mLastCheckedPosition, false);
             notifyItemChanged(mLastCheckedPosition);

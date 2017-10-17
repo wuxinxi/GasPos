@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.szxb.base.BasePresenter;
 import com.szxb.entity.BillEntity;
-import com.szxb.utils.Config;
+import com.szxb.utils.comm.Constant;
 
 import java.lang.ref.WeakReference;
 
@@ -28,20 +28,24 @@ public class BillPresenter extends BasePresenter {
         BillActivity2 activity2 = weakReference.get();
         if (activity2 != null) {
             if (result.getString("rescode").equals("0000")) {
-
-                BillEntity billEntity = new Gson().fromJson(result.toJSONString(), BillEntity.class);
-                if (what == Config.BILLNORMAL)
+                if (what == Constant.BILLNORMAL) {
+                    //流水
+                    BillEntity billEntity = new Gson().fromJson(result.toJSONString(), BillEntity.class);
                     activity2.loadSuccess(billEntity.getJourList());
-                else if (what == Config.BILLREFRESH)
-                    activity2.loadRefreshSuccess(billEntity.getJourList());
-                else if (what == Config.BILLMORE)
-                    activity2.loadMoreSuccess(billEntity.getJourList());
-            }
+                } else if (what == Constant.REFUND_WHAT) {
+                    //退款
+                    activity2.onSuccess(Constant.REFUND_WHAT, null);
+                }
+
+            } else activity2.onFail(what, false, result.toJSONString());
         }
     }
 
     @Override
-    protected void onFail(int what, String failStr) {
-
+    protected void onFail(int what, boolean isOK, String failStr) {
+        BillActivity2 activity2 = weakReference.get();
+        if (activity2 != null) {
+            activity2.onFail(what, isOK, failStr);
+        }
     }
 }

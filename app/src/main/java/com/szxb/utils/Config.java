@@ -3,14 +3,17 @@ package com.szxb.utils;
 
 public class Config {
 
-    public static final String SCANPAY_URL = "http://120.24.212.72:8080/bippay/interaction/hsScanPay";
 
-    public static final String QUERY_URL = "http://139.199.158.253:8080/bippay/interaction/queryorder";
+    private static final String IP = "http://120.24.212.72:8080";
 
-    public static final String LOGIN_URL = "http://120.24.212.72:8080/bippay/interaction/emp_Login";
+    public static final String SCANPAY_URL = IP + "/bippay/interaction/hsScanPay";
+
+    public static final String QUERY_URL = IP + "/bippay/interaction/queryorder";
+
+    public static final String LOGIN_URL = IP + "/bippay/interaction/emp_Login";
 
 
-    public static final String REFUND_RUL = "http://139.199.158.253:8080/bippay/interaction/mlogin";
+    public static final String REFUND_RUL = IP + "/bippay/interaction/mlogin";
 
     public static final int REQUESTQRCODE_WHAT = 1;
 

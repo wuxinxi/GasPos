@@ -16,14 +16,13 @@ import com.jaeger.library.StatusBarUtil;
 import com.szxb.R;
 
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 /**
  * 作者：Tangren on 2017/6/8 11:11
  * 邮箱：wu_tangren@163.com
  * TODO:基类Activity
  */
-public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
+public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract int layoutID();
 
@@ -36,24 +35,33 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         title = (TextView) findViewById(R.id.toolBarTitle);
         home = (Button) findViewById(R.id.home);
         temp = (TextView) findViewById(R.id.temp);
-        home.setOnClickListener(this);
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                back();
+            }
+        });
     }
 
 
     protected abstract void initData();
 
-    private Unbinder unbinder;
+    public void back() {
+        finishActivityFromRight();
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         super.onCreate(savedInstanceState);
         setContentView(layoutID());
         StatusBarUtil.setTransparent(this);
-        unbinder = ButterKnife.bind(this);
+        ButterKnife.bind(this);
         initView();
         initData();
+
     }
 
     @Override
@@ -69,12 +77,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
                                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
     }
 
     protected void startActivityFromRight(Intent intent) {
@@ -105,10 +107,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
     }
 
-    @Override
-    public void onClick(View v) {
-        finishActivityFromRight();
-    }
+
 }

@@ -28,6 +28,5 @@ public class LibApp extends Application {
         this.registerActivityLifecycleCallbacks(new MyActivityLifecycleCallbacks());
         super.onCreate();
 
-
     }
 }

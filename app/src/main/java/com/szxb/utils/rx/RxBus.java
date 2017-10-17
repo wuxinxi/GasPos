@@ -63,4 +63,5 @@ public class RxBus {
     public boolean hasObservers() {
         return bus.hasObservers();
     }
+
 }

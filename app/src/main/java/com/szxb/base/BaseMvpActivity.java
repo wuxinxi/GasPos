@@ -2,6 +2,7 @@ package com.szxb.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.Map;
 
@@ -28,14 +29,16 @@ public abstract class BaseMvpActivity<T extends BasePresenter> extends BaseActiv
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        if (null != getChildPresenter()) {
+        if (getChildPresenter() != null) {
+            Log.d("BaseMvpActivity",
+                    "onCreate(BaseMvpActivity.java:33)mPresenter不为空");
             mPresenter = getChildPresenter();
         }
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public void onSuccess(int what,String str) {
+    public void onSuccess(int what, String str) {
 
     }
 
@@ -45,13 +48,15 @@ public abstract class BaseMvpActivity<T extends BasePresenter> extends BaseActiv
     }
 
     @Override
-    public void onFail(int what,String str) {
+    public void onFail(int what, boolean isOK, String str) {
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("BaseMvpActivity",
+                "onDestroy(BaseMvpActivity.java:59)onDestroy");
         if (mPresenter != null) {
             mPresenter = null;
         }

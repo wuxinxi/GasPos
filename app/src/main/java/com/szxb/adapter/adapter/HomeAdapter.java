@@ -4,8 +4,9 @@ import android.content.Context;
 
 import com.szxb.R;
 import com.szxb.adapter.manager.CommonAdapter;
-import com.szxb.entity.HomeInfoEntity;
+import com.szxb.entity.SeriaInformation;
 import com.szxb.holder.BaseViewHolder;
+import com.szxb.utils.Util;
 
 import java.util.List;
 
@@ -16,18 +17,17 @@ import java.util.List;
  * TODO:主页Adapter
  */
 
-public class HomeAdapter extends CommonAdapter<HomeInfoEntity> {
+public class HomeAdapter extends CommonAdapter<SeriaInformation> {
 
-    public HomeAdapter(Context mContext, int mLayoutId, List<HomeInfoEntity> mDatas) {
+    public HomeAdapter(Context mContext, int mLayoutId, List<SeriaInformation> mDatas) {
         super(mContext, mLayoutId, mDatas);
     }
 
     @Override
-    protected void convert(BaseViewHolder holder, HomeInfoEntity infoEntity, int position) {
+    protected void convert(BaseViewHolder holder, SeriaInformation infoEntity, int position) {
         holder.setText(R.id.gasNo, infoEntity.getGasNo());
-        holder.setText(R.id.gasCapacity, infoEntity.getGasCapacity());
-        holder.setText(R.id.gasMoney, infoEntity.getGasMoney());
-        holder.setText(R.id.gasMemberMoney, infoEntity.getGasMemberMoney());
+        holder.setText(R.id.gasCapacity, Util.getFuelingUp(infoEntity.getFuelingUp()) + "L");
+        holder.setText(R.id.gasMoney, Util.getMoney(infoEntity.getGasMoney()));
         holder.setText(R.id.gasPayStatus, infoEntity.getGasPayStatus());
     }
 }

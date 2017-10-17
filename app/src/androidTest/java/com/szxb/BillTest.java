@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.szxb.entity.BillEntity;
-import com.szxb.utils.Config;
+import com.szxb.utils.comm.UrlComm;
 import com.szxb.xblog.XBLog;
 import com.yanzhenjie.nohttp.rest.Response;
 
@@ -32,7 +32,7 @@ public class BillTest {
 
     @Test
     public void billFet() throws Exception {
-        JsonRequest request = new JsonRequest(Config.LOOP_URL);
+        JsonRequest request = new JsonRequest(UrlComm.getInstance().QUERYURL());
         Map<String, Object> map = new HashMap<>();
         map.put("BEGINTIME", "2017-08-03");
         map.put("ENDTIME", "2017-08-05");

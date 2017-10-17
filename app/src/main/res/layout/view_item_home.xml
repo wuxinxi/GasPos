@@ -26,11 +26,6 @@
                 android:text="@string/gasMoney" />
 
             <TextView
-                android:id="@+id/gasMemberMoney"
-                style="@style/HomeItemText"
-                android:text="@string/gasMemberMoney" />
-
-            <TextView
                 android:id="@+id/gasPayStatus"
                 style="@style/HomeItemText"
                 android:text="@string/gasPayStatus" />

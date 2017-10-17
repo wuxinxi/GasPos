@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/mch_id"
         style="@style/SetTextStyle"
         android:clickable="false"
         android:text="商户号:1000000000" />
@@ -14,6 +15,7 @@
         android:layout_height="1dp" />
 
     <TextView
+        android:id="@+id/emp_num"
         style="@style/SetTextStyle"
         android:clickable="false"
         android:text="员工编号:1000000000" />
@@ -25,15 +27,53 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="5dp" />
 
     <EditText
+        android:id="@+id/ip"
         style="@style/SetTextStyle"
         android:hint="服务器地址"
         android:textColorHint="@color/colorGrayL" />
 
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp" />
+
+    <EditText
+        android:id="@+id/seri_0"
+        style="@style/SetTextStyle"
+        android:hint="串口0"
+        android:inputType="number" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <EditText
+        android:id="@+id/seri_1"
+        style="@style/SetTextStyle"
+        android:hint="串口1"
+        android:inputType="number" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <Button
+        android:id="@+id/determin"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="15dp"
+        android:background="@drawable/button_selector"
+        android:text="确认"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp" />
+
 
 </LinearLayout>
