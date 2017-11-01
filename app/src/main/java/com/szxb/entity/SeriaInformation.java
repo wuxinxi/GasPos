@@ -65,10 +65,14 @@ public class SeriaInformation implements Parcelable {
     private String qtyCount;
     //当前时间
     private String currentTime;
+    //会员单价
+    private String memberPrices;
+    //会员加油金额
+    private String memberGasMoney;
 
     private String remark_1;
     private String remark_2;
-    @Generated(hash = 1119577789)
+    @Generated(hash = 186528715)
     public SeriaInformation(Long id, String gasNo, String seriaOrderNo,
             String machineOrderNo, String traType, String traStartTime,
             String logicalCardNo, String cardMoney, String gasMoney,
@@ -76,7 +80,8 @@ public class SeriaInformation implements Parcelable {
             String ardctc, String refuelPoint, String prices, String oilCode,
             String fuelingUp, String traEndTime, String xbOrderNo,
             String gasPayStatus, String memnerNo, String deviceNo, String qtyCount,
-            String currentTime, String remark_1, String remark_2) {
+            String currentTime, String memberPrices, String memberGasMoney,
+            String remark_1, String remark_2) {
         this.id = id;
         this.gasNo = gasNo;
         this.seriaOrderNo = seriaOrderNo;
@@ -102,6 +107,8 @@ public class SeriaInformation implements Parcelable {
         this.deviceNo = deviceNo;
         this.qtyCount = qtyCount;
         this.currentTime = currentTime;
+        this.memberPrices = memberPrices;
+        this.memberGasMoney = memberGasMoney;
         this.remark_1 = remark_1;
         this.remark_2 = remark_2;
     }
@@ -258,6 +265,18 @@ public class SeriaInformation implements Parcelable {
     public void setCurrentTime(String currentTime) {
         this.currentTime = currentTime;
     }
+    public String getMemberPrices() {
+        return this.memberPrices;
+    }
+    public void setMemberPrices(String memberPrices) {
+        this.memberPrices = memberPrices;
+    }
+    public String getMemberGasMoney() {
+        return this.memberGasMoney;
+    }
+    public void setMemberGasMoney(String memberGasMoney) {
+        this.memberGasMoney = memberGasMoney;
+    }
     public String getRemark_1() {
         return this.remark_1;
     }
@@ -304,6 +323,8 @@ public class SeriaInformation implements Parcelable {
         dest.writeString(this.deviceNo);
         dest.writeString(this.qtyCount);
         dest.writeString(this.currentTime);
+        dest.writeString(this.memberPrices);
+        dest.writeString(this.memberGasMoney);
         dest.writeString(this.remark_1);
         dest.writeString(this.remark_2);
     }
@@ -334,6 +355,8 @@ public class SeriaInformation implements Parcelable {
         this.deviceNo = in.readString();
         this.qtyCount = in.readString();
         this.currentTime = in.readString();
+        this.memberPrices = in.readString();
+        this.memberGasMoney = in.readString();
         this.remark_1 = in.readString();
         this.remark_2 = in.readString();
     }
@@ -378,6 +401,8 @@ public class SeriaInformation implements Parcelable {
                 ", deviceNo='" + deviceNo + '\'' +
                 ", qtyCount='" + qtyCount + '\'' +
                 ", currentTime='" + currentTime + '\'' +
+                ", memberPrices='" + memberPrices + '\'' +
+                ", memberGasMoney='" + memberGasMoney + '\'' +
                 ", remark_1='" + remark_1 + '\'' +
                 ", remark_2='" + remark_2 + '\'' +
                 '}';

@@ -91,7 +91,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void finishActivityFromRight() {
         finish();
-        overridePendingTransition(0, R.anim.base_slide_right_out);
+//        overridePendingTransition(0, R.anim.base_slide_right_out);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -110,5 +110,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
+    }
 }

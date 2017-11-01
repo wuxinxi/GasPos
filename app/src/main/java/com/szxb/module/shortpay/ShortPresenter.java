@@ -46,6 +46,7 @@ public class ShortPresenter extends BasePresenter {
                 case Constant.SHORT_QUERY_WHAT://单次查询支付成功
                     if (rescode.equals("0000")) {
                         activity.onSuccess(what, "支付成功");
+                        cancelTimerTask();
                     } else activity.onFail(what, false, result.toJSONString());
                     break;
                 case Constant.SHORT_CANCEL_WHAT://撤销短码订单
@@ -67,7 +68,7 @@ public class ShortPresenter extends BasePresenter {
     protected void onFail(int what, boolean isOK, String failStr) {
         ShortPayActivity activity = weakReference.get();
         if (activity != null) {
-            activity.onFail(what, isOK, "网络或服务器异常");
+            activity.onFail(what, isOK, failStr);
         }
     }
 }

@@ -25,12 +25,30 @@ public class WaitDialog extends BaseDialog implements View.OnClickListener, Dial
     private CircleProgressBar progressBar;
     private Button disDialog;
     private OnDialogListener listener;
+    private boolean cancelable = true;
+
+    public static WaitDialog newInstance(boolean cancelable) {
+        WaitDialog waitDialog = new WaitDialog();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("cancelable", cancelable);
+        waitDialog.setArguments(bundle);
+        return waitDialog;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        cancelable = getArguments().getBoolean("cancelable");
+    }
 
     @Override
     protected View setView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.view_item_wait, container, false);
         progressBar = (CircleProgressBar) view.findViewById(R.id.progress);
         disDialog = (Button) view.findViewById(R.id.dis_btn);
+        if (cancelable)
+            disDialog.setVisibility(View.VISIBLE);
+        else disDialog.setVisibility(View.GONE);
         disDialog.setOnClickListener(this);
         getDialog().setCanceledOnTouchOutside(false);
         getDialog().setOnKeyListener(this);
@@ -42,7 +60,8 @@ public class WaitDialog extends BaseDialog implements View.OnClickListener, Dial
         if (getDialog() != null && getDialog().isShowing()) {
             progressBar.setVisibility(View.GONE);
             getDialog().dismiss();
-            listener.close();
+            if (listener != null)
+                listener.close();
         }
     }
 

@@ -43,8 +43,10 @@ ext {
             //状态栏
             "library"                   : 'com.jaeger.statusbarutil:library:1.4.0',
             "gson"                      : 'com.google.code.gson:gson:2.2.4',
+            //腾讯bugly
             "crashreport"               : 'com.tencent.bugly:crashreport:2.1.9',
-            "nativecrashreport"         : 'com.tencent.bugly:nativecrashreport:3.0'
+            "nativecrashreport"         : 'com.tencent.bugly:nativecrashreport:3.0',
+            "hotfix"                    : 'com.aliyun.ams:alicloud-android-hotfix:3.1.1'
 
     ]
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.szxb.App;
 import com.szxb.entity.SeriaInformation;
 import com.szxb.tanker.TrankerInterface;
 import com.szxb.utils.UnpackUtil;
@@ -44,7 +45,7 @@ public class TaskRotationService extends Service {
             @Override
             public void run() {
                 try {
-                    if (RxBus.getInstance().hasObservers()) {
+                    if (RxBus.getInstance().hasObservers() && App.getPosManager().getInitK21()) {
                         byte[] recv = new byte[1024];
                         int ret = TrankerInterface.getTrankerData(recv);
                         Log.d("TaskRotationService",

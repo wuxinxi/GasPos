@@ -76,8 +76,16 @@ public class UrlComm {
         return IP() + "/bipjas/interaction/orderResult";
     }
 
+    //短码取消订单接口
     public String ORDERCANCEURL() {
         return IP() + "/bipjas/interaction/orderCancel";
     }
+
+    //检查版本更新
+    public String CHECKVERSIONURL() {
+        return IP() + "/bipjas/interaction/PosVersionCheck";
+    }
+
+
 
 }

@@ -26,25 +26,14 @@
 
             <TextView
                 android:id="@+id/userName"
-                style="@style/LoginEditStyle"
-                android:drawableLeft="@mipmap/ic_username"
-                android:drawableRight="@mipmap/hline"
-                android:gravity="center|left"
-                android:hint="@string/userPhone" />
-
-            <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@drawable/line" />
+                android:layout_height="120dp"
+                android:background="@color/colorWhite"
+                android:gravity="center"
+                android:hint="@string/userPhone"
+                android:maxLength="11"
+                android:textSize="30sp" />
 
-            <TextView
-                android:id="@+id/userPsw"
-                style="@style/LoginEditStyle"
-                android:drawableLeft="@mipmap/ic_userpsw"
-                android:gravity="center|left"
-                android:visibility="gone"
-                android:hint="@string/userPsw"
-                android:password="true" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

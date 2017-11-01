@@ -63,6 +63,10 @@ public interface IPosManager {
 
     boolean getFirstStart();
 
+    void setDefaultPay(int var);
+
+    int getDefaultPay();
+
 
     void loadFromPrefs();
 }

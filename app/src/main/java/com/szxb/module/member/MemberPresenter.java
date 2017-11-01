@@ -28,7 +28,7 @@ public class MemberPresenter extends BasePresenter {
         if (activity != null) {
             String rescode = result.getString("rescode");
             if (rescode.equals("0000")) {
-                activity.onSuccess(what, "登录成功!");
+                activity.onSuccess(what, result.toJSONString());
             } else {
                 String resultString = result.getString("result");
                 if (!TextUtils.isEmpty(resultString))

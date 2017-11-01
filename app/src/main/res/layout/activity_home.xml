@@ -203,21 +203,21 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/scanNoMember"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/scan_pay_selector"
-            android:visibility="gone" />
-
-        <Button
             android:id="@+id/scanMember"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:background="@drawable/scan_pay_selector_m" />
+
+        <Button
+            android:id="@+id/scanNoMember"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="模拟加油"
+            android:visibility="gone" />
 
     </LinearLayout>
 

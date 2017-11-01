@@ -1,23 +1,36 @@
 package com.szxb.module.setting;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.IdRes;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.szxb.App;
 import com.szxb.R;
-import com.szxb.base.BaseActivity;
+import com.szxb.base.BaseMvpActivity;
 import com.szxb.db.sp.CommonSharedPreferences;
 import com.szxb.interfaces.OnAlertListener;
 import com.szxb.utils.Alert;
+import com.szxb.utils.AppUtil;
 import com.szxb.utils.MD5;
+import com.szxb.utils.comm.Constant;
+import com.szxb.utils.comm.UrlComm;
 import com.szxb.utils.tip.Tip;
+import com.szxb.widget.WaitDialog;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -30,7 +43,8 @@ import szxb.com.poslibrary.manager.MyActivityLifecycleCallbacks;
  * TODO:一句话描述
  */
 @Route(path = "/gas/settings")
-public class SettingsActivity extends BaseActivity implements CompoundButton.OnCheckedChangeListener, OnAlertListener {
+public class SettingsActivity extends BaseMvpActivity<SettingPresenter> implements
+        CompoundButton.OnCheckedChangeListener, OnAlertListener, RadioGroup.OnCheckedChangeListener {
 
     @BindView(R.id.exit)
     TextView exit;
@@ -78,9 +92,23 @@ public class SettingsActivity extends BaseActivity implements CompoundButton.OnC
     View comm_layout;
     @BindView(R.id.view_update_layout)
     View update_layout;
+    @BindView(R.id.radio_group)
+    RadioGroup radioGroup;
+    @BindView(R.id.radio_wechat)
+    RadioButton radioWechat;
+    @BindView(R.id.radio_ali)
+    RadioButton radioAli;
+    @BindView(R.id.radio_none)
+    RadioButton radioNone;
 
 
     private Alert alert;
+    private WaitDialog mDialog;
+
+    @Override
+    protected SettingPresenter getChildPresenter() {
+        return new SettingPresenter(this);
+    }
 
     @Override
     protected int layoutID() {
@@ -101,14 +129,42 @@ public class SettingsActivity extends BaseActivity implements CompoundButton.OnC
         IP.setText(App.getPosManager().getURlIP());
         seriO.setText(App.getPosManager().getSeri0());
         seri1.setText(App.getPosManager().getSeri1());
+
         switchCompat.setChecked(App.getPosManager().getClearZero());
         switchMember.setChecked(App.getPosManager().getSupportMember());
 
-        switchCompat.setOnCheckedChangeListener(this);
-        switchMember.setOnCheckedChangeListener(this);
+        radioGroupInit();
 
         alert = new Alert();
+        mDialog = WaitDialog.newInstance(false);
+
+        switchCompat.setOnCheckedChangeListener(this);
+        switchMember.setOnCheckedChangeListener(this);
+        radioGroup.setOnCheckedChangeListener(this);
         alert.setAlertListener(this);
+    }
+
+    //设置默认支付方式
+    private void radioGroupInit() {
+        switch (App.getPosManager().getDefaultPay()) {
+            case 0:
+                radioGroup.check(R.id.radio_wechat);
+                break;
+            case 1:
+                radioGroup.check(R.id.radio_ali);
+                break;
+            default:
+                radioGroup.check(R.id.radio_none);
+                break;
+        }
+    }
+
+    @Override
+    protected Map<String, Object> getRequestParams() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("appname", "gasPos");
+        map.put("mchid", App.getPosManager().getMchID());
+        return map;
     }
 
     @OnClick({R.id.exit, R.id.common_settings, R.id.wifi, R.id.update_psw, R.id.check_update, R.id.determine_update, R.id.determin})
@@ -131,6 +187,9 @@ public class SettingsActivity extends BaseActivity implements CompoundButton.OnC
                 comm_layout.setVisibility(View.GONE);
                 break;
             case R.id.check_update:
+                currentVersion.setText(AppUtil.getVersionName(getApplicationContext()));
+                mPresenter.requestData(Constant.CHECK_WHAT, getRequestParams(), UrlComm.getInstance().CHECKVERSIONURL());
+                showDialog();
                 settingTitle.setText("检查更新");
                 check_layout.setVisibility(View.VISIBLE);
                 update_layout.setVisibility(View.GONE);
@@ -155,7 +214,7 @@ public class SettingsActivity extends BaseActivity implements CompoundButton.OnC
                 }
                 break;
             case R.id.exit:
-                alert.show(this,0, "提示", "真的要退出吗?", "确定", "取消");
+                alert.show(this, 0, "提示", "真的要退出吗?", "确定", "取消");
                 break;
             case R.id.determin:
                 String urlIP = IP.getText().toString();
@@ -197,5 +256,62 @@ public class SettingsActivity extends BaseActivity implements CompoundButton.OnC
     @Override
     public void setPositiveButton(int what) {
         MyActivityLifecycleCallbacks.appExit();
+    }
+
+    @Override
+    public void setNegativeButton(int what) {
+
+    }
+
+    @Override
+    public void onSuccess(int what, String str) {
+        closeDialog();
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setDataAndType(Uri.parse("file://" + str), "application/vnd.android.package-archive");
+        startActivity(intent);
+    }
+
+    @Override
+    public void onFail(int what, boolean isOK, String str) {
+        closeDialog();
+        Tip.show(getApplicationContext(), str, false);
+        currentTip.setText(str);
+        currentVersion.setText(AppUtil.getVersionName(getApplicationContext()));
+    }
+
+    private void showDialog() {
+        FragmentTransaction mFragTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("img");
+        if (fragment != null) {
+            mFragTransaction.remove(fragment);
+        }
+        mDialog.show(mFragTransaction, "img");
+    }
+
+    private void closeDialog() {
+        if (mDialog != null && mDialog.isAdded()) {
+            mPresenter.cancelTimerTask();
+            mDialog.disDialog();
+        }
+
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+        switch (checkedId) {
+            case R.id.radio_wechat:
+                App.getPosManager().setDefaultPay(0);
+                break;
+            case R.id.radio_ali:
+                App.getPosManager().setDefaultPay(1);
+                break;
+            case R.id.radio_none:
+                App.getPosManager().setDefaultPay(2);
+                break;
+            default:
+
+                break;
+        }
     }
 }

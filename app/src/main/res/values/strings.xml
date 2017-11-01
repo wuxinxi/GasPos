@@ -25,6 +25,7 @@
     <string name="exit">退出应用</string>
     <string name="set_clear_zero">抹零</string>
     <string name="set_me_pay">会员支付</string>
+    <string name="set_default_pay">默认支付</string>
     <string name="set_psw">修改安全码</string>
     <string name="chose_tip">未选择订单</string>
     <string name="replease">交接班</string>

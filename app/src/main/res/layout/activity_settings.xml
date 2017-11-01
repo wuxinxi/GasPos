@@ -107,6 +107,51 @@
 
                 <View style="@style/LintStyle" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_set_selector"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/SetTextStyle"
+                        android:background="@null"
+                        android:drawableLeft="@mipmap/ic_pay_type"
+                        android:text="@string/set_default_pay" />
+
+                    <RadioGroup
+                        android:id="@+id/radio_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/radio_wechat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="微信"
+                            android:textSize="15sp" />
+
+                        <RadioButton
+                            android:id="@+id/radio_ali"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="支付宝"
+                            android:textSize="15sp" />
+
+                        <RadioButton
+                            android:id="@+id/radio_none"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="无"
+                            android:textSize="15sp" />
+                    </RadioGroup>
+                </LinearLayout>
+
+
+                <View style="@style/LintStyle" />
+
                 <TextView
                     android:id="@+id/update_psw"
                     style="@style/SetTextStyle"

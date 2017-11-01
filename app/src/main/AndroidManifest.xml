@@ -28,11 +28,9 @@
             </intent-filter>
         </activity>
 
-        <!--<activity-->
-        <!--android:name=".module.home.HomeActivity"-->
-        <!--android:screenOrientation="reverseLandscape" />-->
-
         <receiver android:name=".task.BootBroadcastReceiver">
+
+
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

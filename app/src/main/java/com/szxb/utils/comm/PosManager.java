@@ -25,6 +25,7 @@ public class PosManager implements IPosManager {
     private String shortCode3;
     private boolean initK21;
     private boolean firstStart;
+    private int defaultPay;
 
     @Override
     public void loadFromPrefs() {
@@ -42,6 +43,7 @@ public class PosManager implements IPosManager {
         shortCode3 = FetchAppConfig.getShortCode3();
         initK21 = FetchAppConfig.getInitK21();
         firstStart = FetchAppConfig.getFirstStart();
+        defaultPay = FetchAppConfig.getDefaultPay();
 
     }
 
@@ -191,6 +193,17 @@ public class PosManager implements IPosManager {
     @Override
     public boolean getFirstStart() {
         return firstStart;
+    }
+
+    @Override
+    public void setDefaultPay(int var) {
+        this.defaultPay = var;
+        CommonSharedPreferences.put("type", var);
+    }
+
+    @Override
+    public int getDefaultPay() {
+        return defaultPay;
     }
 
 

@@ -82,4 +82,8 @@ public class FetchAppConfig {
         return (boolean) CommonSharedPreferences.get("firstStart", true);
     }
 
+    //默认扫码支付方式：0微信，1支付宝,2用户自己选择
+    public static int getDefaultPay() {
+        return (Integer) CommonSharedPreferences.get("type", 2);
+    }
 }

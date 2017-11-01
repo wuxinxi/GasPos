@@ -3,6 +3,7 @@ package com.szxb.module.member;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.alibaba.fastjson.JSONObject;
 import com.szxb.R;
 import com.szxb.base.BaseMvpActivity;
 import com.szxb.db.sp.FetchAppConfig;
@@ -33,7 +35,7 @@ import butterknife.OnClick;
  * TODO:一句话描述
  */
 @Route(path = "/gas/member")
-public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements View.OnLongClickListener, WaitDialog.OnDialogListener {
+public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements View.OnLongClickListener {
 
     @BindView(R.id.num_del)
     Button numDel;
@@ -41,12 +43,8 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
     Button numDetermine;
     @BindView(R.id.userName)
     TextView userName;
-    @BindView(R.id.userPsw)
-    TextView userPsw;
 
-    private boolean selectUserName = true;
     private String temUserName;
-    private String temUserPsw;
     private WaitDialog mDialog;
 
     @Autowired
@@ -65,6 +63,8 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
         Map<String, Object> map = new HashMap<>();
         map.put("mchid", FetchAppConfig.mchId());
         map.put("tel", temUserName);
+        map.put("goodcode", "0092");// infoEntity.getOilCode()
+        map.put("qty", "1");//infoEntity.getFuelingUp()
         return map;
     }
 
@@ -87,15 +87,9 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
             tempButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (selectUserName) {
-                        temUserName = userName.getText().toString().trim();
-                        temUserName = temUserName + String.valueOf(((Button) v).getText());
-                        userName.setText(temUserName);
-                    } else {
-                        temUserPsw = userPsw.getText().toString().trim();
-                        temUserPsw = temUserPsw + String.valueOf(((Button) v).getText());
-                        userPsw.setText(temUserPsw);
-                    }
+                    temUserName = userName.getText().toString().trim();
+                    temUserName = temUserName + String.valueOf(((Button) v).getText());
+                    userName.setText(temUserName);
                 }
             });
         }
@@ -104,16 +98,14 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
 
     @Override
     protected void initData() {
-        mDialog = new WaitDialog();
-        mDialog.setCloseListener(this);
+        mDialog = WaitDialog.newInstance(false);
     }
 
-    @OnClick({R.id.num_del, R.id.num_determine, R.id.userName, R.id.userPsw, R.id.temp})
+    @OnClick({R.id.num_del, R.id.num_determine, R.id.userName, R.id.temp})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.num_del:
-                if (selectUserName) Util.delNum(userName);
-                else Util.delNum(userPsw);
+                Util.delNum(userName);
                 break;
             case R.id.num_determine:
                 String name = userName.getText().toString().trim();
@@ -124,16 +116,6 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
                     showDialog();
                     mPresenter.requestData(Constant.MEMBER_LOGIN_WHAT, getRequestParams(), UrlComm.getInstance().MEMBERLOGINURL());
                 }
-                break;
-            case R.id.userName:
-                selectUserName = true;
-                userName.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_username, 0, R.mipmap.hline, 0);
-                userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, 0, 0);
-                break;
-            case R.id.userPsw:
-                selectUserName = false;
-                userName.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_username, 0, 0, 0);
-                userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, R.mipmap.hline, 0);
                 break;
             case R.id.temp:
                 infoEntity.setMemnerNo("1");
@@ -147,7 +129,12 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
 
     @Override
     public void onSuccess(int what, String str) {
-        //会员价格字段改为会员账号
+        Log.d("MemberActivity",
+                "onSuccess(MemberActivity.java:154)" + str);
+        closeDialog();
+        JSONObject object = JSONObject.parseObject(str);
+        infoEntity.setMemberGasMoney(object.getString("viptotal_fee"));
+        infoEntity.setMemberPrices(object.getString("vipprice"));
         infoEntity.setMemnerNo(temUserName);
         next("0");
     }
@@ -170,8 +157,7 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
 
     @Override
     public boolean onLongClick(View v) {
-        if (selectUserName) userName.setText("");
-        else userPsw.setText("");
+        userName.setText("");
         return true;
     }
 
@@ -192,9 +178,4 @@ public class MemberActivity extends BaseMvpActivity<MemberPresenter> implements 
         }
     }
 
-    @Override
-    public void close() {
-        numDetermine.setEnabled(true);
-        closeDialog();
-    }
 }

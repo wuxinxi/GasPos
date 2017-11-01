@@ -29,7 +29,7 @@ public abstract class BasePresenter {
 
     private JsonRequest request;
     private int count = 0;
-    private int ORDECCOUNT = 12;
+    private int ORDECCOUNT = 120;
 
     //是否取消轮训任务的标识符
     private boolean cancel = false;
@@ -72,7 +72,7 @@ public abstract class BasePresenter {
         @Override
         public void run() {
             //有效期5分钟
-            if (count >= 12) {
+            if (count >= 120) {
                 cancel();
                 cancel = true;
                 Log.d("LoopTimerTask",
@@ -106,7 +106,7 @@ public abstract class BasePresenter {
             @Override
             public void success(int what, Response<JSONObject> response) {
                 Log.d("BasePresenter",
-                        "success(BasePresenter.java:82)" + response.get().toJSONString());
+                        "success(BasePresenter.java:108)" + response.get().toJSONString());
                 if (response.get() != null) {
                     if (what == Constant.LOOP_WHAT) {//轮训任务
                         String rescode = response.get().getString("rescode");
@@ -116,9 +116,10 @@ public abstract class BasePresenter {
                                 cancelTimerTask();
                                 break;
                             case "0001":
-                                if (count >= 12) {
+                                if (count >= 120) {
                                     //true表示轮训结束
                                     onFail(what, true, "5分钟内未支付完成");
+                                    cancel = true;
                                 }
                                 //支付中不做处理
                                 break;
@@ -136,9 +137,12 @@ public abstract class BasePresenter {
 
             @Override
             public void fail(int what, String e) {
+                Log.d("BasePresenter",
+                        "success(BasePresenter.java:140)fail=" + e);
                 if (what == Constant.LOOP_WHAT) {
-                    if (count >= 12) {
+                    if (count >= 120) {
                         onFail(what, true, "网络超时且轮训超时");
+                        cancel = true;
                     } else onFail(what, false, "网络或服务器异常");
                 } else {
                     onFail(what, false, "网络或服务器异常");
@@ -158,20 +162,21 @@ public abstract class BasePresenter {
             Log.d("BasePresenter",
                     "success(BasePresenter.java:105)TimerTask stop ……");
             count = 0;
-            ORDECCOUNT = 12;
+            ORDECCOUNT = 120;
             timer.cancel();
             timer = null;
             request.cancelBySign(Constant.LOOP_WHAT);
             cancel = true;
         } else {
             Log.d("BasePresenter",
-                    "success(BasePresenter.java:127)time=null");
+                    "success(BasePresenter.java:1207)time=null");
         }
     }
 
 
     public void cancelBySign(int what) {
-        request.cancelBySign(what);
+        if (request != null)
+            request.cancelBySign(what);
     }
 
     //为了避免轮训任务与手动查询冲突

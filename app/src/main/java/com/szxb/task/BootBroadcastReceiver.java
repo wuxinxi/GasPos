@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.szxb.module.home.HomeActivity;
+import com.szxb.module.login.LoginZipActivity;
 
 
 /**
@@ -21,7 +21,7 @@ public class BootBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION)) {
-            Intent mainActivityIntent = new Intent(context, HomeActivity.class);
+            Intent mainActivityIntent = new Intent(context, LoginZipActivity.class);
             mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(mainActivityIntent);
         }

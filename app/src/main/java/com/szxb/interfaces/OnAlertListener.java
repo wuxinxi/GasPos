@@ -9,4 +9,6 @@ package com.szxb.interfaces;
 
 public interface OnAlertListener {
     void setPositiveButton(int what);
+
+    void setNegativeButton(int what);
 }

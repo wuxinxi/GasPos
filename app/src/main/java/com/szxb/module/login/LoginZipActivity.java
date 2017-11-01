@@ -1,5 +1,6 @@
 package com.szxb.module.login;
 
+import android.content.res.AssetManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import com.szxb.App;
 import com.szxb.R;
 import com.szxb.base.BaseMvpActivity;
 import com.szxb.db.sp.FetchAppConfig;
+import com.szxb.jni.libszxb;
 import com.szxb.utils.MD5;
 import com.szxb.utils.Util;
 import com.szxb.utils.comm.Constant;
@@ -27,6 +29,11 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -100,26 +107,41 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
             });
         }
 
+    }
 
-//        if (!App.getPosManager().getInitK21()) {
-//            Observable.create(new Observable.OnSubscribe<Integer>() {
-//                @Override
-//                public void call(Subscriber<? super Integer> subscriber) {
-//                    AssetManager ass = App.getInstance().getAssets();
-//                    int k = libszxb.ymodemUpdate(ass, "Q6_K21_171009110026.bin");
-//                    subscriber.onNext(k);
-//                }
-//            }).observeOn(AndroidSchedulers.mainThread())
-//                    .subscribeOn(Schedulers.io())
-//                    .subscribe(new Action1<Integer>() {
-//                        @Override
-//                        public void call(Integer integer) {
-//                            App.getPosManager().initK21(true);
-//                            Toast.makeText(LoginZipActivity.this, "固件更新成功", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//
-//        }
+    private void updateK21() {
+        if (!App.getPosManager().getInitK21()) {
+            showDialog();
+            Observable.create(new Observable.OnSubscribe<Integer>() {
+                @Override
+                public void call(Subscriber<? super Integer> subscriber) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Tip.show(getApplicationContext(), "固件更新中……", true);
+                        }
+                    });
+                    AssetManager ass = App.getInstance().getAssets();
+                    int k = libszxb.ymodemUpdate(ass, "Q6_K21_171014163008.bin");
+                    subscriber.onNext(k);
+                }
+            }).observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Action1<Integer>() {
+                        @Override
+                        public void call(Integer integer) {
+                            mDialog.disDialog();
+                            App.getPosManager().initK21(true);
+                            Tip.show(getApplicationContext(), "固件更新成功", true);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            mDialog.disDialog();
+                            Tip.show(getApplicationContext(), "固件更新失败", false);
+                        }
+                    });
+        }
     }
 
     private void initEdit(Button v) {
@@ -150,7 +172,9 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
     @Override
     protected void initData() {
         userName.setText(FetchAppConfig.mchId());
-        mDialog = new WaitDialog();
+        mDialog = WaitDialog.newInstance(false);
+
+        updateK21();
     }
 
     @OnClick({R.id.ip, R.id.userName, R.id.userNo, R.id.userPsw, R.id.login, R.id.num_determine, R.id.num_del})
@@ -216,7 +240,7 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
                 map.put("operaterno", no);
                 map.put("password", psw);
                 mPresenter.requestData(Constant.LOGIN_WHAT, map, UrlComm.getInstance().LOGINURL());
-
+                break;
             case R.id.num_determine:
                 if (selectPostion == 0) {
                     ip = mchIp.getText().toString() + ".";
@@ -276,5 +300,12 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
             mPresenter.cancelBySign(Constant.LOGIN_WHAT);
             mDialog.disDialog();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("LoginZipActivity",
+                "onDestroy(LoginZipActivity.java:309)LoginActivity onDestroy !!!");
     }
 }

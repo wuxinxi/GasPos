@@ -56,6 +56,10 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
     TextView gasPrice;
     @BindView(R.id.gasTotal)
     TextView gasTotal;
+    @BindView(R.id.vipgasPrice)
+    TextView vipgasPrice;
+    @BindView(R.id.vipgasTotal)
+    TextView vipgasTotal;
     @BindView(R.id.qr_code)
     ImageView qrCode;
     @BindView(R.id.wechat_pay)
@@ -79,7 +83,7 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
     private String orderNo = null;
     private String paytype = "1";
     @Autowired
-    String status;//会员状态
+    String status;//会员状态,0:会员 1:非会员
 
     private boolean payFinish = false;//是否支付完成
     private boolean orderFinish = false;//下单是否完成
@@ -116,16 +120,36 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
     @Override
     protected void initData() {
         if (infoEntity == null) finishActivityFromRight();
+
+        Log.d("OrderZipActivity",
+                "initData(OrderZipActivity.java:125)" + infoEntity.toString());
         gasNo.setText("油枪号:" + infoEntity.getGasNo());
-        gasPrice.setText("油品单价:" + Util.getMoney(infoEntity.getPrices()));
         gasCapacity.setText("加油总量:" + Util.getFuelingUp(infoEntity.getFuelingUp()) + "L");
         gasOils.setText("油品编码:" + infoEntity.getOilCode());
         transactionFlow.setText("交易流水:" + infoEntity.getSeriaOrderNo());
-        gasTotal.setText("加油总价:" + Util.getMoney(infoEntity.getGasMoney()));
-        currentGasOrder = infoEntity.getXbOrderNo();
 
+        gasPrice.setText("单价:" + Util.getMoney(infoEntity.getPrices()));
+        gasTotal.setText("总价:" + Util.getMoney(infoEntity.getGasMoney()));
+        Log.d("OrderZipActivity",
+                "initData(OrderZipActivity.java:131)" + infoEntity.getMemnerNo());
+        if (status.equals("0")) {
+            vipgasPrice.setVisibility(View.VISIBLE);
+            vipgasPrice.setText("会员单价:" + Util.getMoney(infoEntity.getMemberPrices()));
+            vipgasTotal.setVisibility(View.VISIBLE);
+            vipgasTotal.setText("会员总价:" + Util.getMoney(infoEntity.getMemberGasMoney()));
+        }
+        currentGasOrder = infoEntity.getXbOrderNo();
         alert = new Alert();
         alert.setAlertListener(this);
+
+        initOrder();
+    }
+
+    private void initOrder() {
+        if (App.getPosManager().getDefaultPay() == 0)
+            wechatPay();
+        else if (App.getPosManager().getDefaultPay() == 1)
+            aliPay();
     }
 
 
@@ -144,9 +168,9 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
         map.put("goodname", infoEntity.getOilCode());//油品名称
         map.put("goodcode", "0092");//商品代码,线上使用infoEntity.getOilCode()
         map.put("qty", "1");//加油升数,infoEntity.getFuelingUp()
-        map.put("total_fee", "0.01");//总金额
+        map.put("total_fee", "1");//总金额
         if (status.equals("1"))
-            map.put("amount", "0.01");//实际扣款
+            map.put("amount", "1");//实际扣款
         map.put("trantime", DateUtil.getCurrentDate());//订单时间
         map.put("saletime", DateUtil.getCurrentDate());//销售时间
         map.put("class", "0001");//班次
@@ -171,74 +195,81 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.wechat_pay:
-
-                if (payFinish) {
-                    Tip.show(getApplicationContext(), "已经支付完成", false);
-                    return;
-                }
-                //如果当前正在请求二维码则提示操作过快
-                if (currentISFetchQR) {
-                    Tip.show(getApplicationContext(), "操作过快", false);
-                    return;
-                }
-                payRsult.setVisibility(View.GONE);
-                title.setText("订单页-微信");
-                if (payPostion == 1) {
-                    //如果正在使用支付宝支付需要切换到微信支付,则停止支付宝轮训任务
-                    Log.d("OrderZipActivity",
-                            "success(OrderZipActivity.java:166)停止支付宝轮训任务");
-                    mPresenter.cancelTimerTask();
-                }
-                payPostion = 0;
-                fetchRequest(Constant.REQUESTQRCODE_WHAT, "1", UrlComm.getInstance().PAYURL());
-                currentISFetchQR = true;
+                wechatPay();
                 break;
             case R.id.ali_pay:
-                if (payFinish) {
-                    Tip.show(getApplicationContext(), "已经支付完成", false);
-                    return;
-                }
-                if (currentISFetchQR) {
-                    Tip.show(getApplicationContext(), "操作过快", false);
-                    return;
-                }
-                payRsult.setVisibility(View.GONE);
-                title.setText("订单页-支付宝");
-                if (payPostion == 0) {
-                    //如果正在使用微信支付需要切换到支付宝支付,则停止微信轮训任务
-                    Log.d("OrderZipActivity",
-                            "success(OrderZipActivity.java:177)停止微信轮训任务");
-                    mPresenter.cancelTimerTask();
-                }
-                payPostion = 1;
-                fetchRequest(Constant.REQUESTQRCODE_WHAT, "2", UrlComm.getInstance().PAYURL());
-                currentISFetchQR = true;
+                aliPay();
                 break;
             case R.id.cash_pay:
-                if (payFinish) {
-                    Tip.show(getApplicationContext(), "已经支付完成", false);
-                    return;
-                }
-                title.setText("订单页-现金");
-                if (currentISFetchQR) {
-                    Tip.show(getApplicationContext(), "操作过快", false);
-                    return;
-                }
-                if (payPostion == 0 || payPostion == 1) {
-                    //如果正在使用微信支付或者支付宝支付需要切换到现金支付,则停止轮训任务
-                    Log.d("OrderZipActivity",
-                            "success(OrderZipActivity.java:177)停止轮训任务");
-                    mPresenter.cancelTimerTask();
-                }
-                payPostion = 2;
-                qrCode.setImageResource(0);
-                selectPayType.setVisibility(View.VISIBLE);
-                fetchRequest(Constant.CASH_WHAT, "0", UrlComm.getInstance().CASHURL());
+                cashPay();
                 break;
             case R.id.temp:
                 checkOrder();
                 break;
         }
+    }
+
+    //现金交易
+    private void cashPay() {
+        if (checkCurrent()) return;
+        title.setText("订单页-现金");
+        if (payPostion == 0 || payPostion == 1) {
+            //如果正在使用微信支付或者支付宝支付需要切换到现金支付,则停止轮训任务
+            Log.d("OrderZipActivity",
+                    "success(OrderZipActivity.java:177)停止轮训任务");
+            mPresenter.cancelTimerTask();
+        }
+        payPostion = 2;
+        qrCode.setImageResource(0);
+        selectPayType.setVisibility(View.VISIBLE);
+        fetchRequest(Constant.CASH_WHAT, "0", UrlComm.getInstance().CASHURL());
+    }
+
+    //检查当前是否有支付成功或者正在生成订单
+    private boolean checkCurrent() {
+        //如果支付完成再点击支付按钮提示
+        if (payFinish) {
+            Tip.show(getApplicationContext(), "已经支付完成", false);
+            return true;
+        }
+        //如果正在生成订单再点击支付按钮提示
+        if (currentISFetchQR) {
+            Tip.show(getApplicationContext(), "操作过快", false);
+            return true;
+        }
+        return false;
+    }
+
+    //支付宝
+    private void aliPay() {
+        if (checkCurrent()) return;
+        payRsult.setVisibility(View.GONE);
+        title.setText("订单页-支付宝");
+        if (payPostion == 0) {
+            //如果正在使用微信支付需要切换到支付宝支付,则停止微信轮训任务
+            Log.d("OrderZipActivity",
+                    "success(OrderZipActivity.java:177)停止微信轮训任务");
+            mPresenter.cancelTimerTask();
+        }
+        payPostion = 1;
+        fetchRequest(Constant.REQUESTQRCODE_WHAT, "2", UrlComm.getInstance().PAYURL());
+        currentISFetchQR = true;
+    }
+
+    //微信支付
+    private void wechatPay() {
+        if (checkCurrent()) return;
+        payRsult.setVisibility(View.GONE);
+        title.setText("订单页-微信");
+        if (payPostion == 1) {
+            //如果正在使用支付宝支付需要切换到微信支付,则停止支付宝轮训任务
+            Log.d("OrderZipActivity",
+                    "success(OrderZipActivity.java:166)停止支付宝轮训任务");
+            mPresenter.cancelTimerTask();
+        }
+        payPostion = 0;
+        fetchRequest(Constant.REQUESTQRCODE_WHAT, "1", UrlComm.getInstance().PAYURL());
+        currentISFetchQR = true;
     }
 
     //请求
@@ -259,6 +290,7 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
             payFinish();
             return;
         }
+        //下单完成
         orderFinish = true;
         selectPayType.setVisibility(View.GONE);
         qrCode.setImageBitmap(Util.Create2DCode(str, 600, 600));
@@ -272,10 +304,18 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
 
     //支付完成的操作
     private void payFinish() {
+        //支付完成
         payFinish = true;
+        //支付状态
         payRsult.setVisibility(View.VISIBLE);
         payRsult.setBackgroundResource(R.mipmap.ic_pay_success);
+        //取消二维码
+        qrCode.setImageResource(0);
+        //二维码框显示支付完成
+        selectPayType.setVisibility(View.VISIBLE);
         selectPayType.setText("支付成功");
+        tip.setText("支付成功");
+        //修改数据库支付状态
         DBManager.updatePayState(currentGasOrder);
         Tip.show(getApplicationContext(), "支付完成", true);
     }
@@ -310,7 +350,9 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
     }
 
     private void checkOrder() {
-        alert.show(this, Constant.ALERT_CHECK_WHAT, "提示", "已完成支付,页面无提示?", "查询", "取消");
+        if (mPresenter.isCancleTask())
+            alert.show(this, Constant.ALERT_CHECK_WHAT, "提示", "已完成支付,页面无提示?", "查询", "取消");
+        else Tip.show(getApplicationContext(), "暂未完成支付", false);
     }
 
 
@@ -329,6 +371,10 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
                 break;
         }
 
+    }
+
+    @Override
+    public void setNegativeButton(int what) {
     }
 
 }

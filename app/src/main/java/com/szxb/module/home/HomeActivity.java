@@ -22,8 +22,10 @@ import com.szxb.db.manager.DBManager;
 import com.szxb.entity.SeriaInformation;
 import com.szxb.interfaces.OnItemClick;
 import com.szxb.module.bill.BillActivity2;
+import com.szxb.module.login.LoginZipActivity;
 import com.szxb.module.setting.SettingsActivity;
 import com.szxb.task.TaskRotationService;
+import com.szxb.utils.TestUtil;
 import com.szxb.utils.rx.RxBus;
 import com.szxb.utils.tip.Tip;
 import com.szxb.xblog.XBLog;
@@ -40,6 +42,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import szxb.com.poslibrary.manager.MyActivityLifecycleCallbacks;
 
 /**
  * 作者: Tangren on 2017/7/30
@@ -52,7 +55,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
 
     Intent intent;
     Subscription sub;
-    Subscription subscription;
     @BindView(R.id.queryRecord)
     Button queryRecord;
     @BindView(R.id.setting)
@@ -107,7 +109,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
         //没有toolbar所以要注释掉父类的initView
         //super.initView();
         intent = new Intent(HomeActivity.this, TaskRotationService.class);
-//        startService(intent);
+        startService(intent);
         mAdapter = new HomeAdapter(getApplicationContext(), R.layout.view_item_home, infoEntitiesList);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
@@ -121,6 +123,17 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
         threeShortCode.setOnLongClickListener(this);
 
         activity = this;
+
+        checkeMemberOpen();
+
+        MyActivityLifecycleCallbacks.finishActivityClass(LoginZipActivity.class);
+    }
+
+    //检查是否开启二维码会员支付功能
+    private void checkeMemberOpen() {
+        if (App.getPosManager().getSupportMember())
+            scanMember.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        else scanMember.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.mipmap.ic_lock);
     }
 
     @Override
@@ -130,6 +143,8 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                     @Override
                     public Boolean call(SeriaInformation infoEntity) {
                         //如果数据库不存在则往下走储存到数据库，否则直接过滤
+                        Log.d("HomeActivity",
+                                "call(HomeActivity.java:143)" + infoEntity.toString());
                         return DBManager.query(infoEntity);
                     }
                 }).flatMap(new Func1<SeriaInformation, Observable<Long>>() {
@@ -154,11 +169,26 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                         mAdapter.setItemChecked(-1);
                         infoEntity = null;
                         //如果选择的是实时记录并且当前Activity在前台显示则更新UI
+
+                        Log.d("HomeActivity",
+                                "call(HomeActivity.java:168)selectPosition=" + selectPosition);
+
+                        Log.d("HomeActivity",
+                                "call(HomeActivity.java:171)isVisible=" + isVisible);
+
                         if (selectPosition == 0 && isVisible) {
+                            Log.d("HomeActivity",
+                                    "call(HomeActivity.java:168)更新UI");
                             infoEntitiesList.clear();
                             infoEntitiesList.addAll(0, infoEntities);
                             mAdapter.notifyDataSetChanged();
                         }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.d("HomeActivity",
+                                "call(HomeActivity.java:185)" + throwable.toString());
                     }
                 });
 
@@ -185,7 +215,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                         .navigation();
                 break;
             case R.id.scanNoMember:
-
+                TestUtil.getInstance().send();
                 break;
             case R.id.scanMember:
                 //会员
@@ -317,14 +347,15 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
             case 0x11:
                 selectPosition(0);
-                query(3);
+                mAdapter.notifyDataSetChanged();
                 break;
             case 0x12:
-                if (data != null)
+                selectPosition(0);
+                mAdapter.notifyDataSetChanged();
+                if (data != null) {
                     switch (SHORT_TEXT_SELECT) {
                         case 1:
                             firstShortCode.setText(data.getStringExtra("short_code"));
@@ -339,9 +370,11 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
 
                             break;
                     }
+                }
                 break;
             default:
                 break;
+
         }
     }
 
@@ -365,6 +398,8 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
         Log.d("HomeActivity",
                 "onDestroy(HomeActivity.java:372)onRestart");
         isVisible = true;
+        selectPosition(0);
+        checkeMemberOpen();
     }
 
     @Override
@@ -397,6 +432,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
 
                 break;
         }
-        return false;
+        return true;
     }
 }

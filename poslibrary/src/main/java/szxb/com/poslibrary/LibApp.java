@@ -6,6 +6,7 @@ import com.yanzhenjie.nohttp.InitializationConfig;
 import com.yanzhenjie.nohttp.Logger;
 import com.yanzhenjie.nohttp.NoHttp;
 import com.yanzhenjie.nohttp.OkHttpNetworkExecutor;
+import com.yanzhenjie.nohttp.cache.DBCacheStore;
 
 import szxb.com.poslibrary.manager.MyActivityLifecycleCallbacks;
 
@@ -20,8 +21,9 @@ public class LibApp extends Application {
     @Override
     public void onCreate() {
         NoHttp.initialize(InitializationConfig.newBuilder(this)
+                .cacheStore(new DBCacheStore(this))
                 .networkExecutor(new OkHttpNetworkExecutor())
-                .retry(3)
+
                 .build());
         Logger.setDebug(true);
         Logger.setTag("加油信息记录");

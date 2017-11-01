@@ -33,7 +33,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">18sp</item>
         <item name="android:layout_marginLeft">15dp</item>
-        <item name="android:layout_marginTop">7dp</item>
+        <item name="android:layout_marginTop">3dp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -121,5 +121,11 @@
         <item name="android:textSize">16sp</item>
         <item name="android:layout_marginLeft">5dp</item>
     </style>
+
+
+    <style name="RecyclerItem">
+        <item name="android:foreground">@drawable/selector_recycler_item</item>
+    </style>
+
 
 </resources>

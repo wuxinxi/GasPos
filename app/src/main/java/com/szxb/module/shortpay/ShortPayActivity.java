@@ -114,7 +114,7 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
             shortCode.setText(short_code);
         if (infoEntity != null)
             currentGasOrder = infoEntity.getXbOrderNo();
-        mDialog = new WaitDialog();
+        mDialog = WaitDialog.newInstance(true);
         mDialog.setCloseListener(this);
         alert = new Alert();
         alert.setAlertListener(this);
@@ -133,8 +133,8 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
         map.put("goodname", infoEntity.getOilCode());//油品名称
         map.put("goodcode", "0092");//商品代码,线上使用infoEntity.getOilCode()
         map.put("qty", infoEntity.getFuelingUp());//加油升数
-        map.put("total_fee", "0.01");//总金额
-        map.put("price", infoEntity.getPrices());//油品单价
+        map.put("total_fee", 1);//总金额
+        map.put("price", infoEntity.getPrices());//油品单价infoEntity.getPrices()
         map.put("shortcode", shortCode.getText().toString());//短码
         map.put("trantime", DateUtil.getCurrentDate());//订单时间
         map.put("saletime", DateUtil.getCurrentDate());//销售时间
@@ -156,7 +156,6 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
                 Util.delNum(shortCode);
                 break;
             case R.id.num_determine:
-
                 if (shortCode.getText().toString().length() < 4) {
                     Tip.show(getApplicationContext(), "订单不存在", false);
                     return;
@@ -165,7 +164,7 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
                     Tip.show(getApplicationContext(), "暂未完成支付", false);
                     return;
                 }
-
+                showDialog();
                 mPresenter.requestData(Constant.SHORT_QUERY_WHAT, getLoopRequestParams(), UrlComm.getInstance().SHORTORDERQUERYURL());
                 break;
             case R.id.guaqi:
@@ -173,6 +172,14 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
                     Tip.show(getApplicationContext(), "短码不能少于4位", false);
                     return;
                 }
+                if (!payFinish && orderFinish) {
+                    Tip.show(getApplicationContext(), "已下单无法挂起,正在撤销", false);
+                    //撤销操作
+                    showDialog();
+                    mPresenter.requestData(Constant.SHORT_CANCEL_WHAT, getLoopRequestParams(), UrlComm.getInstance().ORDERCANCEURL());
+                    return;
+                }
+
                 intent.putExtra("short_code", shortCode.getText().toString());
                 this.setResult(0x12, intent);
                 finishActivityFromRight();
@@ -222,18 +229,23 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
                 DBManager.updatePayState(currentGasOrder);
                 //支付成功
                 closeDialog();
+                goPay.setText("支付完成");
                 break;
             case Constant.SHORT_QUERY_WHAT: //单次查询支付成功
                 tip.setText("支付成功");
                 payFinish = true;
                 mPresenter.cancelTimerTask();//并且取消轮训
+                DBManager.updatePayState(currentGasOrder);
                 Tip.show(getApplicationContext(), str, true);
+                goPay.setText("支付完成");
+                closeDialog();
                 break;
             case Constant.SHORT_CANCEL_WHAT://取消订单
                 tip.setText("撤销成功");
                 orderFinish = false;
                 Tip.show(getApplicationContext(), str, true);
                 closeDialog();
+                finishActivityFromRight();
                 break;
             default:
 
@@ -267,14 +279,19 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
             case Constant.LOOP_WHAT:
                 if (isOK) {
                     tip.setText("暂未完成支付");
-                    goPay.setEnabled(true);
                     Tip.show(getApplicationContext(), str + "\n可手动查询支付结果", false);
                     closeDialog();
                 }
                 break;
-            default://短码下单、短码撤销
+            case Constant.SHORT_WHAT://短码下单失败
+                tip.setText(str);
                 goPay.setEnabled(true);
                 closeDialog();
+                Tip.show(getApplicationContext(), str, false);
+                break;
+            default://短码订单查询、短码撤销
+                closeDialog();
+                tip.setText(str);
                 Tip.show(getApplicationContext(), str, false);
                 break;
         }
@@ -284,8 +301,9 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
     public void back() {
         Log.d("OrderZipActivity",
                 "success(ShortPayActivity.java:266)BACK…………………………………………");
+        //paFinish=true,orderFinish=false
         if (!payFinish && orderFinish) {
-            alert.show(this, 0, "提示", "页面暂未完成支付,确认是否离开?", "是", "否");
+            alert.show(this, 0, "提示", "页面暂未完成支付,确认是否离开?", "撤销订单", "强制退出", "否");
         } else {
             finishActivityFromRight();
         }
@@ -294,7 +312,7 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
 
     @Override
     public void close() {
-        goPay.setEnabled(true);
+        Tip.show(getApplicationContext(), "撤销中", true);
         //取消轮训任务
         mPresenter.cancelTimerTask();
         //撤销操作
@@ -309,5 +327,10 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
         //撤销操作
         showDialog();
         mPresenter.requestData(Constant.SHORT_CANCEL_WHAT, getLoopRequestParams(), UrlComm.getInstance().ORDERCANCEURL());
+    }
+
+    @Override
+    public void setNegativeButton(int what) {
+        finishActivityFromRight();
     }
 }

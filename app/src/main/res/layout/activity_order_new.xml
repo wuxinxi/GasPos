@@ -27,34 +27,43 @@
             <TextView
                 android:id="@+id/gasOils"
                 style="@style/PayLayoutTextLeft"
-                android:layout_below="@id/gasNo"
                 android:text="油品编码:0000" />
 
             <TextView
                 android:id="@+id/transactionFlow"
                 style="@style/PayLayoutTextLeft"
-                android:layout_below="@id/gasOils"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:text="交易流水:000000000" />
 
             <TextView
                 android:id="@+id/gasCapacity"
                 style="@style/PayLayoutTextLeft"
-                android:layout_below="@id/transactionFlow"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="10dp"
                 android:text="加油总量:0.00L" />
 
             <TextView
                 android:id="@+id/gasPrice"
                 style="@style/PayLayoutTextRight"
-                android:layout_below="@id/gasCapacity"
                 android:text="油品单价:0.00" />
 
             <TextView
                 android:id="@+id/gasTotal"
                 style="@style/PayLayoutTextRight"
-                android:layout_below="@+id/memberPrice"
                 android:text="加油总价:0.00" />
+
+            <TextView
+                android:id="@+id/vipgasPrice"
+                style="@style/PayLayoutTextRight"
+                android:text="会员单价:0.00"
+                android:visibility="gone"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/vipgasTotal"
+                style="@style/PayLayoutTextRight"
+                android:text="会员总价:0.00"
+                android:visibility="gone"
+                android:textColor="@color/colorAccent" />
 
         </LinearLayout>
 
@@ -95,9 +104,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="50dp"
             android:layout_marginTop="10dp"
-            android:text=""
             android:textColor="@color/colorAccent"
             android:textSize="15sp" />
 
