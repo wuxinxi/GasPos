@@ -1,4 +1,4 @@
-package com.szxb.utils.comm;
+package com.szxb.manager;
 
 import com.szxb.db.sp.CommonSharedPreferences;
 import com.szxb.db.sp.FetchAppConfig;
@@ -12,20 +12,38 @@ import com.szxb.db.sp.FetchAppConfig;
 
 public class PosManager implements IPosManager {
 
+    //IP
     private String urlip;
+    //串口0
     private String seri0;
+    //串口1
     private String seri1;
+    //商户号
     private String mch_id;
+    //员工编号
     private String user_no;
+    //默认安全码
     private String code;
+    //抹零
     private boolean clearZero;
+    //是否开启会员
     private boolean supportMember;
+    //
     private String shortCode1;
+    //
     private String shortCode2;
+    //
     private String shortCode3;
+    //K21初始化状态
     private boolean initK21;
+    //是否是第一次启动
     private boolean firstStart;
+    //默认支付方式
     private int defaultPay;
+    //设备号
+    private String device;
+    //版本名称
+    private String versionName;
 
     @Override
     public void loadFromPrefs() {
@@ -44,6 +62,8 @@ public class PosManager implements IPosManager {
         initK21 = FetchAppConfig.getInitK21();
         firstStart = FetchAppConfig.getFirstStart();
         defaultPay = FetchAppConfig.getDefaultPay();
+        versionName = FetchAppConfig.getVersionName();
+        device = "000000";
 
     }
 
@@ -204,6 +224,27 @@ public class PosManager implements IPosManager {
     @Override
     public int getDefaultPay() {
         return defaultPay;
+    }
+
+    @Override
+    public void setDevice(String device) {
+        this.device = device;
+    }
+
+    @Override
+    public String getDevice() {
+        return device;
+    }
+
+    @Override
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+        CommonSharedPreferences.put("versionName", versionName);
+    }
+
+    @Override
+    public String getVersionName() {
+        return versionName;
     }
 
 

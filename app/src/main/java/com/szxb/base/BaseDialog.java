@@ -1,11 +1,13 @@
 package com.szxb.base;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +39,7 @@ public abstract class BaseDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setBackgroundDrawableResource(R.color.transparent);
-        return setView(inflater,container,savedInstanceState);
+        return setView(inflater, container, savedInstanceState);
 
     }
 
@@ -46,7 +48,16 @@ public abstract class BaseDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
+        hideBottom();
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void hideBottom() {
         Window window = this.getDialog().getWindow();
+        if (window == null) {
+            return;
+        }
         window.getDecorView()
                 .setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -55,6 +66,14 @@ public abstract class BaseDialog extends DialogFragment {
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        Log.d("BaseDialog",
+                "onAttach(BaseDialog.java:65)");
     }
 
 }

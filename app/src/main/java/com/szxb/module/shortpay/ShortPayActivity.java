@@ -125,15 +125,15 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
         orderNo = Util.getOrderNo();
         Map<String, Object> map = new HashMap<>();
         map.put("orderid", orderNo);
-        map.put("trantype", 0);
-        map.put("paytype", 9);
+        map.put("trantype", "0");
+        map.put("paytype", "9");
         map.put("devno", "0001");
         map.put("mchid", App.getPosManager().getMchID());
         map.put("mername", App.getPosManager().getOrderDec());
         map.put("goodname", infoEntity.getOilCode());//油品名称
         map.put("goodcode", "0092");//商品代码,线上使用infoEntity.getOilCode()
         map.put("qty", infoEntity.getFuelingUp());//加油升数
-        map.put("total_fee", 1);//总金额
+        map.put("total_fee", "1");//总金额
         map.put("price", infoEntity.getPrices());//油品单价infoEntity.getPrices()
         map.put("shortcode", shortCode.getText().toString());//短码
         map.put("trantime", DateUtil.getCurrentDate());//订单时间

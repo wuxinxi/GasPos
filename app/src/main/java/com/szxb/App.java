@@ -4,10 +4,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.example.zhoukai.modemtooltest.ModemToolTest;
 import com.szxb.db.manager.DBCore;
+import com.szxb.manager.IPosManager;
+import com.szxb.manager.PosManager;
 import com.szxb.utils.AppUtil;
-import com.szxb.utils.comm.IPosManager;
-import com.szxb.utils.comm.PosManager;
+import com.szxb.utils.comm.Constant;
 import com.szxb.xblog.AndroidLogAdapter;
 import com.szxb.xblog.CsvFormatStrategy;
 import com.szxb.xblog.DiskLogAdapter;
@@ -51,8 +53,7 @@ public class App extends LibApp {
         instance = this;
         DBCore.init(this, DB_NAME);
 
-        CrashReport.initCrashReport(getApplicationContext(), "3356395c44", true);
-        CrashReport.putUserData(getApplicationContext(), "device_no", "00000000");
+        CrashReport.initCrashReport(getApplicationContext(), "b30e070993", true);
 
         manager = new PosManager();
         manager.loadFromPrefs();
@@ -60,6 +61,9 @@ public class App extends LibApp {
         ARouter.openDebug();   // 开启调试模式(如果在InstantRun模式下运行，必须开启调试模式！线上版本需要关闭,否则有安全风险)
         ARouter.init(this);
 
+        //获取设备号
+        String device = ModemToolTest.getItem(Constant.MEMBER_LOGIN_WHAT);
+        manager.setDevice(device == null ? "000000" : device);
 
         initLog(true);
 //

@@ -1,4 +1,4 @@
-package com.szxb.utils.comm;
+package com.szxb.manager;
 
 /**
  * 作者: Tangren on 2017-10-10
@@ -66,6 +66,14 @@ public interface IPosManager {
     void setDefaultPay(int var);
 
     int getDefaultPay();
+
+    void setDevice(String device);
+
+    String getDevice();
+
+    void setVersionName(String versionName);
+
+    String getVersionName();
 
 
     void loadFromPrefs();

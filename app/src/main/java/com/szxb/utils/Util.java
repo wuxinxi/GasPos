@@ -282,7 +282,12 @@ public class Util {
     }
 
 
-    public static String bcd2Str(byte[] bytes) {
+    /**
+     * 旧
+     * @param bytes
+     * @return
+     */
+    public static String bcd2Str2(byte[] bytes) {
         StringBuffer temp = new StringBuffer(bytes.length * 2);
         for (int i = 0; i < bytes.length; i++) {
             temp.append((byte) ((bytes[i] & 0xf0) >>> 4));
@@ -292,6 +297,23 @@ public class Util {
                 .toString().substring(1) : temp.toString();
     }
 
+    /**
+     * 新
+     * @param bytes
+     * @return
+     */
+    public static String bcd2Str(byte[] bytes) {
+        char temp[] = new char[bytes.length * 2], val;
+
+        for (int i = 0; i < bytes.length; i++) {
+            val = (char) (((bytes[i] & 0xf0) >> 4) & 0x0f);
+            temp[i * 2] = (char) (val > 9 ? val + 'A' - 10 : val + '0');
+
+            val = (char) (bytes[i] & 0x0f);
+            temp[i * 2 + 1] = (char) (val > 9 ? val + 'A' - 10 : val + '0');
+        }
+        return new String(temp);
+    }
 
     //加油总量/100
     public static String getFuelingUp(String fuelingUp) {

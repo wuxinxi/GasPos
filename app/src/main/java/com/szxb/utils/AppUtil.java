@@ -1,9 +1,16 @@
 package com.szxb.utils;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
+
+import com.szxb.App;
+
+import java.util.List;
 
 /**
  * 作者: Tangren on 2017/8/7
@@ -26,6 +33,12 @@ public class AppUtil {
         }
     }
 
+    /**
+     * 获取当前版本号
+     *
+     * @param context .
+     * @return .
+     */
     public static String getVersionName(Context context) {
         PackageManager packageManager = context.getPackageManager();
         try {
@@ -33,10 +46,24 @@ public class AppUtil {
             return packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-            return "1.0";
+            return "1.0.0";
         }
     }
 
+    public static boolean isForeground(String className) {
+        if (TextUtils.isEmpty(className)) {
+            return false;
+        }
+        ActivityManager am = (ActivityManager) App.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
+        if (list != null && list.size() > 0) {
+            ComponentName cpn = list.get(0).topActivity;
+            if (className.equals(cpn.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static final String AL_APPID = "24658003-1";
 

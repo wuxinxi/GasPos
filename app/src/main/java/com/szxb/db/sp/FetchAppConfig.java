@@ -14,7 +14,7 @@ public class FetchAppConfig {
 
     //获取
     public static String mchId() {
-        return (String) CommonSharedPreferences.get("mch_id", "100100100101");
+        return (String) CommonSharedPreferences.get("mch_id", "");
     }
 
     //获取appId
@@ -33,7 +33,7 @@ public class FetchAppConfig {
     }
 
     public static String ip() {
-        return (String) CommonSharedPreferences.get("ip", "112.74.102.125");
+        return (String) CommonSharedPreferences.get("ip", "");
     }
 
     //串口0
@@ -85,5 +85,11 @@ public class FetchAppConfig {
     //默认扫码支付方式：0微信，1支付宝,2用户自己选择
     public static int getDefaultPay() {
         return (Integer) CommonSharedPreferences.get("type", 2);
+    }
+
+
+    //版本名称
+    public static String getVersionName() {
+        return (String) CommonSharedPreferences.get("versionName", "1.0.0");
     }
 }

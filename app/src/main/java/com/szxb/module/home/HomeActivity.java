@@ -112,6 +112,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
         startService(intent);
         mAdapter = new HomeAdapter(getApplicationContext(), R.layout.view_item_home, infoEntitiesList);
         LinearLayoutManager manager = new LinearLayoutManager(this);
+//        GridLayoutManager manager=new GridLayoutManager(this,3);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
 
@@ -150,6 +151,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                 }).flatMap(new Func1<SeriaInformation, Observable<Long>>() {
                     @Override
                     public Observable<Long> call(SeriaInformation infoEntity) {
+
                         SeriaInformationDao homeInfoEntityDao = DBCore.getDaoSession().getSeriaInformationDao();
                         return Observable.just(homeInfoEntityDao.insert(infoEntity));
                     }
@@ -169,20 +171,13 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                         mAdapter.setItemChecked(-1);
                         infoEntity = null;
                         //如果选择的是实时记录并且当前Activity在前台显示则更新UI
-
-                        Log.d("HomeActivity",
-                                "call(HomeActivity.java:168)selectPosition=" + selectPosition);
-
-                        Log.d("HomeActivity",
-                                "call(HomeActivity.java:171)isVisible=" + isVisible);
-
                         if (selectPosition == 0 && isVisible) {
-                            Log.d("HomeActivity",
-                                    "call(HomeActivity.java:168)更新UI");
                             infoEntitiesList.clear();
                             infoEntitiesList.addAll(0, infoEntities);
                             mAdapter.notifyDataSetChanged();
                         }
+
+
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -270,8 +265,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                 .withString("short_code", shortCode)
                 .withParcelable("infoEntity", infoEntity)
                 .navigation(HomeActivity.this, requestCode);
-        Log.d("HomeActivity",
-                "nextActivity(HomeActivity.java:242)" + SHORT_TEXT_SELECT);
     }
 
     /**
@@ -385,8 +378,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("HomeActivity",
-                "onPause(HomeActivity.java:362)onPause");
         mCurrentPosition = -1;
         isVisible = false;
 
@@ -395,8 +386,6 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d("HomeActivity",
-                "onDestroy(HomeActivity.java:372)onRestart");
         isVisible = true;
         selectPosition(0);
         checkeMemberOpen();

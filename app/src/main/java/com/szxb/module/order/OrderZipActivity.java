@@ -160,7 +160,7 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
         map.put("orderid", orderNo);
         map.put("trantype", "0");//0-商品销售 1-充值
         map.put("paytype", paytype);//0-现金 1-微信 2-支付宝 3-ic卡 4-银行卡
-        map.put("devno", "000000");
+        map.put("devno", App.getPosManager().getDevice());
         map.put("memno", infoEntity.getMemnerNo());//会员卡号,如果不是会员传1
         map.put("member_status", status);//会员0,不是会员传1
         map.put("mchid", App.getPosManager().getMchID());
@@ -181,6 +181,7 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
         map.put("rmk", "无");//备注
         return map;
     }
+
 
     @Override
     protected Map<String, Object> getLoopRequestParams() {
@@ -323,8 +324,6 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
 
     @Override
     public void onFail(int what, boolean isOK, String str) {
-        Log.d("OrderZipActivity",
-                "success(OrderZipActivity.java:244)" + what);
         currentISFetchQR = false;
         progress.setVisibility(View.GONE);
         Tip.show(getApplicationContext(), str, false);
@@ -336,6 +335,7 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
             payRsult.setBackgroundResource(R.mipmap.ic_pay_fail);
         } else if (what == Constant.CASH_WHAT || what == Constant.REQUESTQRCODE_WHAT) {
             selectPayType.setVisibility(View.VISIBLE);
+            qrCode.setImageResource(0);
         }
     }
 

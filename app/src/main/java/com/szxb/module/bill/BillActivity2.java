@@ -193,7 +193,7 @@ public class BillActivity2 extends BaseMvpActivity<BillPresenter> implements Dat
     @Override
     public void onItemClick(View view, int position) {
         BillEntity.JourListBean jourListBean = listBeanList.get(position);
-        Tip.show(getApplicationContext(), jourListBean.toString(), true);
+//        Tip.show(getApplicationContext(), jourListBean.toString(), true);
 //
 //        Map<String, Object> map = new HashMap<>();
 //        map.put("mchid", App.getPosManager().getMchID());

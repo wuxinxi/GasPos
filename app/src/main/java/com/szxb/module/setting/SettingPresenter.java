@@ -81,7 +81,11 @@ public class SettingPresenter extends BasePresenter {
                             });
                 }
 
-            } else activity.onFail(what, false, result.toJSONString());
+            } else {
+                if (rescode.equals("0001")) {
+                    activity.onFail(what, false, result.getString("result"));
+                }
+            }
         }
     }
 

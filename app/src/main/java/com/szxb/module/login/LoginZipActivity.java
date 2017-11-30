@@ -4,19 +4,18 @@ import android.content.res.AssetManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.szxb.App;
 import com.szxb.R;
 import com.szxb.base.BaseMvpActivity;
-import com.szxb.db.sp.FetchAppConfig;
 import com.szxb.jni.libszxb;
-import com.szxb.utils.MD5;
+import com.szxb.utils.AppUtil;
 import com.szxb.utils.Util;
 import com.szxb.utils.comm.Constant;
 import com.szxb.utils.comm.UrlComm;
@@ -59,6 +58,8 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
     TextView mchIp;
     @BindView(R.id.login)
     Button login;
+    @BindView(R.id.next)
+    ImageView next;
 
     private int[] buttons = {R.id.num_0, R.id.num_1, R.id.num_2, R.id.num_3, R.id.num_4,
             R.id.num_5, R.id.num_6, R.id.num_7, R.id.num_8, R.id.num_9};
@@ -69,6 +70,8 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
     private String no;
 
     private WaitDialog mDialog;
+    //是否显示IP
+    private boolean isShow = false;
 
     @Override
     protected LoginPresenter getChildPresenter() {
@@ -88,15 +91,6 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         title.setText("登录");
         numDetermine.setText(".");
-        if (App.getPosManager().getFirstStart()) {
-            selectPostion = 0;
-            mchIp.setVisibility(View.VISIBLE);
-            mchIp.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_ip, 0, R.mipmap.hline, 0);
-        } else {
-            selectPostion = 1;
-            mchIp.setVisibility(View.GONE);
-            userName.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_username, 0, R.mipmap.hline, 0);
-        }
         for (int button : buttons) {
             Button tempButton = (Button) findViewById(button);
             tempButton.setOnClickListener(new View.OnClickListener() {
@@ -106,11 +100,12 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
                 }
             });
         }
-
+        select1();
     }
 
     private void updateK21() {
-        if (!App.getPosManager().getInitK21()) {
+        final String versionName = AppUtil.getVersionName(getApplicationContext());
+        if (!TextUtils.equals(versionName, App.getPosManager().getVersionName())) {
             showDialog();
             Observable.create(new Observable.OnSubscribe<Integer>() {
                 @Override
@@ -131,7 +126,7 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
                         @Override
                         public void call(Integer integer) {
                             mDialog.disDialog();
-                            App.getPosManager().initK21(true);
+                            App.getPosManager().setVersionName(versionName);
                             Tip.show(getApplicationContext(), "固件更新成功", true);
                         }
                     }, new Action1<Throwable>() {
@@ -171,13 +166,18 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
 
     @Override
     protected void initData() {
-        userName.setText(FetchAppConfig.mchId());
-        mDialog = WaitDialog.newInstance(false);
+        userName.setText(App.getPosManager().getMchID());
+        mchIp.setText(App.getPosManager().getURlIP());
+        userNo.setText(App.getPosManager().getUserNo());
 
+        mDialog = WaitDialog.newInstance(false);
         updateK21();
     }
 
-    @OnClick({R.id.ip, R.id.userName, R.id.userNo, R.id.userPsw, R.id.login, R.id.num_determine, R.id.num_del})
+
+    @OnClick({R.id.ip, R.id.userName, R.id.userNo,
+            R.id.userPsw, R.id.login, R.id.num_determine,
+            R.id.num_del, R.id.next})
     public void onViewClicked(View view) {
 
         ip = mchIp.getText().toString();
@@ -187,18 +187,10 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
 
         switch (view.getId()) {
             case R.id.ip:
-                selectPostion = 0;
-                mchIp.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_ip, 0, R.mipmap.hline, 0);
-                userName.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_username, 0, 0, 0);
-                userNo.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userno, 0, 0, 0);
-                userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, 0, 0);
+                select0();
                 break;
             case R.id.userName:
-                selectPostion = 1;
-                mchIp.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_ip, 0, 0, 0);
-                userName.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_username, 0, R.mipmap.hline, 0);
-                userNo.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userno, 0, 0, 0);
-                userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, 0, 0);
+                select1();
                 break;
             case R.id.userNo:
                 selectPostion = 2;
@@ -221,11 +213,6 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
                         return;
                     } else {
                         App.getPosManager().setURLIP(mchIp.getText().toString());
-
-                        Log.d("LoginZipActivity",
-                                "onViewClicked(LoginZipActivity.java:180)" + UrlComm.getInstance().LOGINURL());
-                        Log.d("LoginZipActivity",
-                                "onViewClicked(LoginZipActivity.java:183)" + mchIp.getText().toString());
                     }
                 } else {
                     if (TextUtils.isEmpty(no) || TextUtils.isEmpty(user) || TextUtils.isEmpty(psw)) {
@@ -234,7 +221,7 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
                     }
                 }
                 showDialog();
-                userPsw.setText(MD5.md5(psw));
+                App.getPosManager().setURLIP(mchIp.getText().toString());
                 Map<String, Object> map = new HashMap<>();
                 map.put("mchid", user);
                 map.put("operaterno", no);
@@ -263,9 +250,34 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
                         break;
                 }
                 break;
+            case R.id.next:
+                isShow = !isShow;
+                mchIp.setVisibility(isShow ? View.VISIBLE : View.GONE);
+                if (!isShow) {
+                    select1();
+                } else {
+                    select0();
+                }
+                break;
             default:
                 break;
         }
+    }
+
+    private void select1() {
+        selectPostion = 1;
+        mchIp.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_ip, 0, 0, 0);
+        userName.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_username, 0, R.mipmap.hline, 0);
+        userNo.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userno, 0, 0, 0);
+        userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, 0, 0);
+    }
+
+    private void select0() {
+        selectPostion = 0;
+        mchIp.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_ip, 0, R.mipmap.hline, 0);
+        userName.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_username, 0, 0, 0);
+        userNo.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userno, 0, 0, 0);
+        userPsw.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_userpsw, 0, 0, 0);
     }
 
 
@@ -274,6 +286,7 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
         closeDialog();
         App.getPosManager().setMchID(user);
         App.getPosManager().setUserNo(no);
+        App.getPosManager().setURLIP(ip);
         App.getPosManager().setFirstStart(false);
         Router.jumpL("/gas/home");
     }
@@ -302,10 +315,4 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("LoginZipActivity",
-                "onDestroy(LoginZipActivity.java:309)LoginActivity onDestroy !!!");
-    }
 }
