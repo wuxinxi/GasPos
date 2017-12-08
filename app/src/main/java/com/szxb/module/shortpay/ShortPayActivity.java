@@ -131,18 +131,18 @@ public class ShortPayActivity extends BaseMvpActivity<ShortPresenter> implements
         map.put("mchid", App.getPosManager().getMchID());
         map.put("mername", App.getPosManager().getOrderDec());
         map.put("goodname", infoEntity.getOilCode());//油品名称
-        map.put("goodcode", "0092");//商品代码,线上使用infoEntity.getOilCode()
+        map.put("goodcode", infoEntity.getOilCode());//商品代码,线上使用infoEntity.getOilCode()
         map.put("qty", infoEntity.getFuelingUp());//加油升数
-        map.put("total_fee", "1");//总金额
+        map.put("total_fee", infoEntity.getGasMoney());//总金额 infoEntity.getGasMoney()
         map.put("price", infoEntity.getPrices());//油品单价infoEntity.getPrices()
         map.put("shortcode", shortCode.getText().toString());//短码
         map.put("trantime", DateUtil.getCurrentDate());//订单时间
         map.put("saletime", DateUtil.getCurrentDate());//销售时间
-        map.put("class", "001");//班次
-        map.put("operaterno", FetchAppConfig.userNo());//操作员编号
-        map.put("salerno", "0001");//销售员编号
-        map.put("mchineno", "12");//加油机号
-        map.put("gmchineno", "1");//加油枪号
+        map.put("class", infoEntity.getLogicalCardNo());//班次
+        map.put("operaterno", App.getPosManager().getUserNo());//操作员编号
+        map.put("salerno", App.getPosManager().getUserNo());//销售员编号,逻辑卡号
+        map.put("mchineno", infoEntity.getRemark_1());//加油机号
+        map.put("gmchineno",infoEntity.getGasMoney());//加油枪号
         map.put("rmk", "无");//备注
         return map;
     }

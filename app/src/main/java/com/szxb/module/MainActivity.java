@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.pay_result)
     PayStatusView payStatusView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

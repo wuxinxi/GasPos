@@ -7,6 +7,7 @@
     <EditText
         android:id="@+id/old_psw"
         style="@style/SetTextStyle"
+        android:inputType="number"
         android:hint="原始密码" />
 
     <View
@@ -16,6 +17,7 @@
     <EditText
         android:id="@+id/new_psw"
         style="@style/SetTextStyle"
+        android:inputType="number"
         android:hint="新密码" />
 
     <View
@@ -25,6 +27,7 @@
     <EditText
         android:id="@+id/re_new_psw"
         style="@style/SetTextStyle"
+        android:inputType="number"
         android:hint="确认密码" />
 
     <View

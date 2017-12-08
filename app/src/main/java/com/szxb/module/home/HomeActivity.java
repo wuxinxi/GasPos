@@ -2,7 +2,7 @@ package com.szxb.module.home;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +25,6 @@ import com.szxb.module.bill.BillActivity2;
 import com.szxb.module.login.LoginZipActivity;
 import com.szxb.module.setting.SettingsActivity;
 import com.szxb.task.TaskRotationService;
-import com.szxb.utils.TestUtil;
 import com.szxb.utils.rx.RxBus;
 import com.szxb.utils.tip.Tip;
 import com.szxb.xblog.XBLog;
@@ -110,9 +109,9 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
         //super.initView();
         intent = new Intent(HomeActivity.this, TaskRotationService.class);
         startService(intent);
-        mAdapter = new HomeAdapter(getApplicationContext(), R.layout.view_item_home, infoEntitiesList);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-//        GridLayoutManager manager=new GridLayoutManager(this,3);
+        mAdapter = new HomeAdapter(getApplicationContext(), R.layout.view_item_grid_home, infoEntitiesList);
+//        LinearLayoutManager manager = new LinearLayoutManager(this);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
 
@@ -125,13 +124,13 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
 
         activity = this;
 
-        checkeMemberOpen();
+        checkMemberOpen();
 
         MyActivityLifecycleCallbacks.finishActivityClass(LoginZipActivity.class);
     }
 
     //检查是否开启二维码会员支付功能
-    private void checkeMemberOpen() {
+    private void checkMemberOpen() {
         if (App.getPosManager().getSupportMember())
             scanMember.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         else scanMember.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.mipmap.ic_lock);
@@ -144,14 +143,11 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                     @Override
                     public Boolean call(SeriaInformation infoEntity) {
                         //如果数据库不存在则往下走储存到数据库，否则直接过滤
-                        Log.d("HomeActivity",
-                                "call(HomeActivity.java:143)" + infoEntity.toString());
                         return DBManager.query(infoEntity);
                     }
                 }).flatMap(new Func1<SeriaInformation, Observable<Long>>() {
                     @Override
                     public Observable<Long> call(SeriaInformation infoEntity) {
-
                         SeriaInformationDao homeInfoEntityDao = DBCore.getDaoSession().getSeriaInformationDao();
                         return Observable.just(homeInfoEntityDao.insert(infoEntity));
                     }
@@ -177,6 +173,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                             mAdapter.notifyDataSetChanged();
                         }
 
+//                        FilterManager.getInstance().filter(infoEntities.get(0));
 
                     }
                 }, new Action1<Throwable>() {
@@ -210,13 +207,15 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
                         .navigation();
                 break;
             case R.id.scanNoMember:
-                TestUtil.getInstance().send();
+
                 break;
             case R.id.scanMember:
                 //会员
-                if (App.getPosManager().getSupportMember())
+                if (App.getPosManager().getSupportMember()) {
                     nextActivity("/gas/member", 0x11);
-                else Tip.show(getApplicationContext(), "请先开启会员支付功能", false);
+                } else {
+                    Tip.show(getApplicationContext(), "请先开启会员支付功能", false);
+                }
                 break;
             case R.id.currentCheck:
                 selectPosition(0);
@@ -388,7 +387,7 @@ public class HomeActivity extends BaseActivity implements OnItemClick, View.OnLo
         super.onRestart();
         isVisible = true;
         selectPosition(0);
-        checkeMemberOpen();
+        checkMemberOpen();
     }
 
     @Override

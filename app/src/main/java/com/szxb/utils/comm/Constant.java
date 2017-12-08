@@ -25,5 +25,6 @@ public class Constant {
     public static final int ALERT_CHECK_WHAT = 12;//订单查询
     public static final int ALERT_BACK_WHAT = 13;//back
     public static final int TIP_WHAT = 14;//tip
-    public static final int CHECK_WHAT = 14;//检查更新
+    public static final int CHECK_WHAT = 15;//检查更新
+    public static final int UPDATE_EMP = 16;//更新员工信息
 }

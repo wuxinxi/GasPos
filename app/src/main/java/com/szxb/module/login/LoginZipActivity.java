@@ -101,7 +101,13 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
             });
         }
         select1();
+////
+//        String str = "1a002d000000010000003b0088002017120615050411000419901000001629005ef8cc00138800138867000004006813130272102100031f0005192e20171206150534";
+//        byte[] recv = com.szxb.module.login.Util.hexStringToBytes(str);
+//
+//        UnpackUtil.unpack(recv);
     }
+
 
     private void updateK21() {
         final String versionName = AppUtil.getVersionName(getApplicationContext());
@@ -283,19 +289,47 @@ public class LoginZipActivity extends BaseMvpActivity<LoginPresenter> {
 
     @Override
     public void onSuccess(int what, String str) {
-        closeDialog();
-        App.getPosManager().setMchID(user);
-        App.getPosManager().setUserNo(no);
-        App.getPosManager().setURLIP(ip);
-        App.getPosManager().setFirstStart(false);
-        Router.jumpL("/gas/home");
+
+        switch (what) {
+            case Constant.LOGIN_WHAT:
+                Tip.show(getApplicationContext(), "登录成功\n正在更新参数", true);
+                App.getPosManager().setMchID(user);
+                App.getPosManager().setUserNo(no);
+                App.getPosManager().setURLIP(ip);
+                App.getPosManager().setFirstStart(false);
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("mchid", user);
+                mPresenter.requestData(Constant.UPDATE_EMP, map, UrlComm.getInstance().EMPLIST());
+                break;
+            case Constant.UPDATE_EMP:
+                Tip.show(getApplicationContext(), "更新参数成功", true);
+                Router.jumpL("/gas/home");
+                break;
+            default:
+
+                break;
+        }
+
     }
 
     @Override
     public void onFail(int what, boolean isOK, String str) {
-        userPsw.setText("");
+        switch (what) {
+            case Constant.LOGIN_WHAT:
+                userPsw.setText("");
+                Tip.show(getApplicationContext(), str, false);
+                break;
+            case Constant.UPDATE_EMP:
+                Tip.show(getApplicationContext(), "参数更新失败", false);
+                Router.jumpL("/gas/home");
+                break;
+            default:
+
+                break;
+        }
+
         closeDialog();
-        Tip.show(getApplicationContext(), str, false);
     }
 
 

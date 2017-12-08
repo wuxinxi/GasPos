@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.github.yuweiguocn.library.greendao.MigrationHelper;
 import com.szxb.db.dao.DaoMaster;
+import com.szxb.db.dao.EmpEntityDao;
 import com.szxb.db.dao.HomeInfoEntityDao;
 import com.szxb.db.dao.SeriaInformationDao;
 
@@ -24,6 +25,6 @@ public class DBHelper extends DaoMaster.OpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         super.onUpgrade(db, oldVersion, newVersion);
-        MigrationHelper.migrate(db, HomeInfoEntityDao.class, SeriaInformationDao.class);
+        MigrationHelper.migrate(db, HomeInfoEntityDao.class, SeriaInformationDao.class, EmpEntityDao.class);
     }
 }

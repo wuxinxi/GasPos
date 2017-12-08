@@ -326,6 +326,8 @@ public class Util {
 
     public static String getMoney(String money) {
         if (isNumber(money)) {
+            Log.d("Util",
+                "getMoney(Util.java:330)");
             double flu = (Double.valueOf(money))/100;
             return decimalFormat.format(flu);
         }

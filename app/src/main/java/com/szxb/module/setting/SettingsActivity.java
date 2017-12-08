@@ -19,6 +19,7 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.szxb.App;
 import com.szxb.R;
 import com.szxb.base.BaseMvpActivity;
+import com.szxb.db.manager.DBManager;
 import com.szxb.db.sp.CommonSharedPreferences;
 import com.szxb.interfaces.OnAlertListener;
 import com.szxb.utils.Alert;
@@ -60,6 +61,10 @@ public class SettingsActivity extends BaseMvpActivity<SettingPresenter> implemen
     TextView updatePsw;
     @BindView(R.id.check_update)
     TextView checkUpdate;
+    @BindView(R.id.check_emp_info)
+    TextView checkEmpInfo;
+    @BindView(R.id.clear_cache)
+    TextView clearCache;
     @BindView(R.id.setting_title)
     TextView settingTitle;
     @BindView(R.id.old_psw)
@@ -167,7 +172,8 @@ public class SettingsActivity extends BaseMvpActivity<SettingPresenter> implemen
         return map;
     }
 
-    @OnClick({R.id.exit, R.id.common_settings, R.id.wifi, R.id.update_psw, R.id.check_update, R.id.determine_update, R.id.determin})
+    @OnClick({R.id.exit, R.id.common_settings, R.id.wifi, R.id.update_psw, R.id.check_update,
+            R.id.determine_update, R.id.determin, R.id.check_emp_info, R.id.clear_cache})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.common_settings:
@@ -210,7 +216,10 @@ public class SettingsActivity extends BaseMvpActivity<SettingPresenter> implemen
                             reNewPsw.setText("");
                             Tip.show(getApplicationContext(), "两次密码不一致!", false);
                         }
-                    } else Tip.show(getApplicationContext(), "原密码错误!", false);
+                    } else {
+                        oldPsw.setText("");
+                        Tip.show(getApplicationContext(), "原密码错误!", false);
+                    }
                 }
                 break;
             case R.id.exit:
@@ -231,6 +240,16 @@ public class SettingsActivity extends BaseMvpActivity<SettingPresenter> implemen
                 CommonSharedPreferences.put("seri_1", seri_1);
                 App.getPosManager().setSeri1(seri_1);
                 Tip.show(getApplicationContext(), "修改成功", true);
+                break;
+            case R.id.check_emp_info:
+                showDialog();
+                Map<String, Object> map = new HashMap<>();
+                map.put("mchid", App.getPosManager().getMchID());
+                mPresenter.requestData(Constant.UPDATE_EMP, map, UrlComm.getInstance().EMPLIST());
+                break;
+            case R.id.clear_cache:
+                Tip.show(getApplicationContext(), "开始清除", true);
+                DBManager.deleteAll();
                 break;
             default:
 
@@ -266,18 +285,40 @@ public class SettingsActivity extends BaseMvpActivity<SettingPresenter> implemen
     @Override
     public void onSuccess(int what, String str) {
         closeDialog();
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setDataAndType(Uri.parse("file://" + str), "application/vnd.android.package-archive");
-        startActivity(intent);
+        switch (what) {
+            case Constant.CHECK_WHAT:
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setDataAndType(Uri.parse("file://" + str), "application/vnd.android.package-archive");
+                startActivity(intent);
+                break;
+            case Constant.UPDATE_EMP:
+                Tip.show(getApplicationContext(), "员工信息更新成功", true);
+                break;
+            default:
+
+                break;
+        }
+
     }
 
     @Override
     public void onFail(int what, boolean isOK, String str) {
         closeDialog();
-        Tip.show(getApplicationContext(), str, false);
-        currentTip.setText(str);
-        currentVersion.setText(AppUtil.getVersionName(getApplicationContext()));
+        switch (what) {
+            case Constant.CHECK_WHAT:
+                Tip.show(getApplicationContext(), str, false);
+                currentTip.setText(str);
+                currentVersion.setText(AppUtil.getVersionName(getApplicationContext()));
+                break;
+            case Constant.UPDATE_EMP:
+                Tip.show(getApplicationContext(), "员工信息更新失败\n请重试\n[" + str + "]", false);
+                break;
+            default:
+
+                break;
+        }
+
     }
 
     private void showDialog() {

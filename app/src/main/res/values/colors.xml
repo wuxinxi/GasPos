@@ -14,6 +14,7 @@
     <color name="colorWhite">#FFFFFF</color>
 
     <color name="colorGray">#EAEAE8</color>
+    <color name="colorGrayS">#FFEDECEC</color>
     <color name="colorGrayL">#C0C0C0</color>
     <color name="colorText">#424345</color>
 

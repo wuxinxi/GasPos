@@ -2,6 +2,8 @@ package com.szxb.utils.comm;
 
 import com.szxb.App;
 
+import static org.apache.commons.net.telnet.TelnetCommand.IP;
+
 /**
  * 作者: Tangren on 2017-10-14
  * 包名：com.szxb.utils.comm
@@ -86,6 +88,15 @@ public class UrlComm {
         return IP() + "/bipjas/interaction/PosVersionCheck";
     }
 
+    //员工列表下载接口
+    public String EMPLIST() {
+        return IP() + "/bipjas/interaction/empCardNoList";
+    }
+
+    //IC卡交易上传接口
+    public String ICPUSH() {
+        return IP + "/bipjas/interaction/transferICs";
+    }
 
 
 }

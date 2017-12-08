@@ -22,6 +22,8 @@
     <string name="settings_wifi">WIFI</string>
     <string name="settings">设置</string>
     <string name="check_update">检查更新</string>
+    <string name="check_emp_info">更新员工信息</string>
+    <string name="clear_cache">清除缓存</string>
     <string name="exit">退出应用</string>
     <string name="set_clear_zero">抹零</string>
     <string name="set_me_pay">会员支付</string>

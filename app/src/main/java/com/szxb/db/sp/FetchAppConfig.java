@@ -29,7 +29,7 @@ public class FetchAppConfig {
 
     //员工编号
     public static String userNo() {
-        return (String) CommonSharedPreferences.get("user_no", "0");
+        return (String) CommonSharedPreferences.get("user_no", "");
     }
 
     public static String ip() {

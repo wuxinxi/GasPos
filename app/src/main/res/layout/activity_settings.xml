@@ -24,25 +24,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:showDividers="middle"
+                android:divider="@drawable/line"
                 android:orientation="vertical">
 
                 <TextView
                     style="@style/SetTextStyleTop"
                     android:text="@string/settings" />
 
-                <View style="@style/LintStyle" />
-
-                <View
-                    style="@style/LintStyle"
-                    android:layout_marginTop="15dp" />
-
                 <TextView
+                    android:layout_marginTop="15dp"
                     android:id="@+id/common_settings"
                     style="@style/SetTextStyle"
                     android:drawableLeft="@mipmap/ic_settings"
                     android:text="@string/settings_comm" />
 
-                <View style="@style/LintStyle" />
 
                 <TextView
                     android:id="@+id/wifi"
@@ -50,9 +46,6 @@
                     android:drawableLeft="@mipmap/ic_wifi"
                     android:text="@string/settings_wifi" />
 
-                <View
-                    style="@style/LintStyle"
-                    android:visibility="gone" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -78,8 +71,6 @@
                         app:showText="true" />
                 </LinearLayout>
 
-                <View style="@style/LintStyle" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -104,8 +95,6 @@
                         app:showText="true" />
                 </LinearLayout>
 
-
-                <View style="@style/LintStyle" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -150,7 +139,6 @@
                 </LinearLayout>
 
 
-                <View style="@style/LintStyle" />
 
                 <TextView
                     android:id="@+id/update_psw"
@@ -158,7 +146,6 @@
                     android:drawableLeft="@mipmap/ic_check_update"
                     android:text="@string/set_psw" />
 
-                <View style="@style/LintStyle" />
 
                 <TextView
                     android:id="@+id/check_update"
@@ -166,7 +153,19 @@
                     android:drawableLeft="@mipmap/ic_update_psw"
                     android:text="@string/check_update" />
 
-                <View style="@style/LintStyle" />
+                <TextView
+                    android:id="@+id/check_emp_info"
+                    style="@style/SetTextStyle"
+                    android:drawableLeft="@mipmap/ic_update_psw"
+                    android:text="@string/check_emp_info" />
+
+
+                <TextView
+                    android:id="@+id/clear_cache"
+                    style="@style/SetTextStyle"
+                    android:drawableLeft="@mipmap/ic_clear_cache"
+                    android:text="@string/clear_cache" />
+
 
                 <TextView
                     android:id="@+id/exit"
@@ -174,7 +173,6 @@
                     android:drawableLeft="@mipmap/ic_exit"
                     android:text="@string/exit" />
 
-                <View style="@style/LintStyle" />
 
             </LinearLayout>
         </ScrollView>

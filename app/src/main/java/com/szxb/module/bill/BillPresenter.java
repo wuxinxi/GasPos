@@ -37,7 +37,7 @@ public class BillPresenter extends BasePresenter {
                     activity2.onSuccess(Constant.REFUND_WHAT, null);
                 }
 
-            } else activity2.onFail(what, false, result.toJSONString());
+            } else activity2.onFail(what, false, result.getString("result"));
         }
     }
 

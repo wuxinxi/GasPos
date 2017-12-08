@@ -8,9 +8,11 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
+import com.szxb.entity.EmpEntity;
 import com.szxb.entity.HomeInfoEntity;
 import com.szxb.entity.SeriaInformation;
 
+import com.szxb.db.dao.EmpEntityDao;
 import com.szxb.db.dao.HomeInfoEntityDao;
 import com.szxb.db.dao.SeriaInformationDao;
 
@@ -23,9 +25,11 @@ import com.szxb.db.dao.SeriaInformationDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
+    private final DaoConfig empEntityDaoConfig;
     private final DaoConfig homeInfoEntityDaoConfig;
     private final DaoConfig seriaInformationDaoConfig;
 
+    private final EmpEntityDao empEntityDao;
     private final HomeInfoEntityDao homeInfoEntityDao;
     private final SeriaInformationDao seriaInformationDao;
 
@@ -33,22 +37,32 @@ public class DaoSession extends AbstractDaoSession {
             daoConfigMap) {
         super(db);
 
+        empEntityDaoConfig = daoConfigMap.get(EmpEntityDao.class).clone();
+        empEntityDaoConfig.initIdentityScope(type);
+
         homeInfoEntityDaoConfig = daoConfigMap.get(HomeInfoEntityDao.class).clone();
         homeInfoEntityDaoConfig.initIdentityScope(type);
 
         seriaInformationDaoConfig = daoConfigMap.get(SeriaInformationDao.class).clone();
         seriaInformationDaoConfig.initIdentityScope(type);
 
+        empEntityDao = new EmpEntityDao(empEntityDaoConfig, this);
         homeInfoEntityDao = new HomeInfoEntityDao(homeInfoEntityDaoConfig, this);
         seriaInformationDao = new SeriaInformationDao(seriaInformationDaoConfig, this);
 
+        registerDao(EmpEntity.class, empEntityDao);
         registerDao(HomeInfoEntity.class, homeInfoEntityDao);
         registerDao(SeriaInformation.class, seriaInformationDao);
     }
     
     public void clear() {
+        empEntityDaoConfig.clearIdentityScope();
         homeInfoEntityDaoConfig.clearIdentityScope();
         seriaInformationDaoConfig.clearIdentityScope();
+    }
+
+    public EmpEntityDao getEmpEntityDao() {
+        return empEntityDao;
     }
 
     public HomeInfoEntityDao getHomeInfoEntityDao() {

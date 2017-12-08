@@ -3,6 +3,6 @@
 
     <corners android:topLeftRadius="7dp" android:topRightRadius="7dp"/>
 
-    <solid android:color="@color/colorGreen"/>
+    <solid android:color="@color/load_failure"/>
 
 </shape>

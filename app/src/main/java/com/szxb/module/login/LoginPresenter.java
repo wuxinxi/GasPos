@@ -2,11 +2,17 @@ package com.szxb.module.login;
 
 import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.szxb.App;
 import com.szxb.base.BasePresenter;
+import com.szxb.db.manager.DBManager;
+import com.szxb.entity.EmpEntity;
+import com.szxb.utils.comm.Constant;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 作者: Tangren on 2017/6/28
@@ -27,11 +33,36 @@ public class LoginPresenter extends BasePresenter {
     protected void onAllSuccess(int what, JSONObject result) {
         LoginZipActivity activity = weakReference.get();
         if (activity != null) {
-
             String rescode = result.getString("rescode");
-            if (TextUtils.equals(rescode, "0000")) {
-                activity.onSuccess(what, "登录成功!");
-            } else activity.onFail(what, false, result.toString());
+            switch (what) {
+                case Constant.LOGIN_WHAT:
+                    if (rescode != null && TextUtils.equals(rescode, "0000")) {
+                        activity.onSuccess(what, "登录成功!");
+                    } else {
+                        activity.onFail(what, false, result.toString());
+                    }
+                    break;
+                case Constant.UPDATE_EMP:
+                    if (rescode != null && TextUtils.equals(rescode, "0000")) {
+                        JSONArray list = result.getJSONArray("list");
+                        List<EmpEntity> empEntitys = new ArrayList<>();
+                        for (int i = 0; i < list.size(); i++) {
+                            JSONObject empNo = list.getJSONObject(i);
+                            String empNoStr = empNo.getString("EMPCARDNO");
+                            EmpEntity empEntity = new EmpEntity();
+                            empEntity.setEmpNo(empNoStr);
+                            empEntitys.add(empEntity);
+                        }
+                        DBManager.updateEmp(empEntitys);
+                        activity.onSuccess(what, "员工信息更新成功!");
+                    } else {
+                        activity.onFail(what, false, result.toString());
+                    }
+                    break;
+                default:
+
+                    break;
+            }
 
         }
     }

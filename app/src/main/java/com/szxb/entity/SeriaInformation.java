@@ -69,7 +69,7 @@ public class SeriaInformation implements Parcelable {
     private String memberPrices;
     //会员加油金额
     private String memberGasMoney;
-
+    //终端号
     private String remark_1;
     private String remark_2;
     @Generated(hash = 186528715)

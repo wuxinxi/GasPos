@@ -51,6 +51,7 @@ public class App extends LibApp {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
         DBCore.init(this, DB_NAME);
 
         CrashReport.initCrashReport(getApplicationContext(), "b30e070993", true);

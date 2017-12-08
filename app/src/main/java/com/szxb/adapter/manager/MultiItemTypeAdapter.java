@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.szxb.R;
 import com.szxb.holder.BaseViewHolder;
@@ -73,7 +74,7 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ItemViewType itemViewType = manager.getItemViewDelegate(viewType);
         int layoutID = itemViewType.getItemViewLayoutID();
-        BaseViewHolder holder = BaseViewHolder.createViewHolder(mContext, parent, layoutID,click);
+        BaseViewHolder holder = BaseViewHolder.createViewHolder(mContext, parent, layoutID, click);
         onViewHolderCreated(holder, holder.getConvertView());
         return holder;
     }
@@ -93,9 +94,17 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         if (!mBooleanArray.get(position)) {
-            holder.itemView.setBackgroundResource(R.color.colorWhite);
+//            holder.itemView.setBackgroundResource(R.color.colorWhite);
+            LinearLayout layout = holder.getView(R.id.linear_layout);
+            if (layout!=null){
+                layout.setBackgroundResource(R.drawable.home_grid_item_shape);
+            }
         } else {
-            holder.itemView.setBackgroundResource(R.color.colorSettingNormal);
+//            holder.itemView.setBackgroundResource(R.color.colorAccent);
+            LinearLayout layout = holder.getView(R.id.linear_layout);
+            if (layout!=null){
+                layout.setBackgroundResource(R.drawable.home_grid_item_shape_press);
+            }
         }
         convert(holder, mDatas.get(position));
     }
@@ -131,7 +140,6 @@ public class MultiItemTypeAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             notifyItemChanged(mLastCheckedPosition);
         }
         notifyDataSetChanged();
-
         mLastCheckedPosition = position;
     }
 

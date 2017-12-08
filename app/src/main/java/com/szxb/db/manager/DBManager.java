@@ -3,12 +3,17 @@ package com.szxb.db.manager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.szxb.App;
+import com.szxb.db.dao.EmpEntityDao;
 import com.szxb.db.dao.SeriaInformationDao;
+import com.szxb.entity.EmpEntity;
 import com.szxb.entity.SeriaInformation;
+import com.szxb.utils.tip.Tip;
 
 import org.greenrobot.greendao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperationListener;
+import org.greenrobot.greendao.async.AsyncSession;
 import org.greenrobot.greendao.query.CountQuery;
-import org.greenrobot.greendao.query.Query;
 
 import java.util.List;
 
@@ -17,91 +22,7 @@ import java.util.List;
  * 邮箱：wu_tangren@163.com
  * TODO:数据库操作类
  */
-public class DBManager<T> {
-
-    /**
-     * 异步插入单条数据
-     *
-     * @param entity 要插入的对象
-     * @param <T>    泛型对象
-     */
-    public static <T> AsyncOperation Asyncinsert(T entity) {
-        return DBCore.getASyncDaoSession().insert(entity);
-    }
-
-    /**
-     * 同步插入单条数据
-     *
-     * @param entity 要插入的对象
-     * @param <T>    泛型对象
-     */
-    public static <T> void syncInsert(T entity) {
-        DBCore.getDaoSession().insert(entity);
-    }
-
-    /**
-     * 插入或替换
-     *
-     * @param entity 要插入的对象
-     * @param <T>    泛型对象
-     */
-    public static <T> void insertOrReplease(T entity) {
-        DBCore.getASyncDaoSession().insertOrReplace(entity);
-    }
-
-
-    /**
-     * 修改
-     *
-     * @param entity 要修改的对象
-     * @param <T>    泛型对象
-     */
-    public static <T> void update(T entity) {
-        DBCore.getASyncDaoSession().update(entity);
-    }
-
-    /**
-     * 查询所有数据
-     *
-     * @param <T> 泛型对象
-     * @return List集合
-     * Query<T> query = DBCore.getDaoSession().queryBuilder(entity).orderDesc(...Dao.Properties.Id).build();
-     */
-    public static <T> List<T> query(Query<T> query) {
-        AsyncOperation asyncOperation = DBCore.getASyncDaoSession().queryList(query);
-        return (List<T>) asyncOperation.getResult();
-    }
-
-    /**
-     * 查询扫码的对象
-     *
-     * @param <T> 泛型对象
-     * @return 查询出单个对象
-     */
-    public static <T> T queryEntity(Query<T> query) {
-        AsyncOperation asyncOperation = DBCore.getASyncDaoSession().queryUnique(query);
-        return (T) asyncOperation.getResult();
-    }
-
-    /**
-     * 删除
-     *
-     * @param entity 删除某个对象
-     * @param <T>    泛型对象
-     */
-    public static <T> void delete(T entity) {
-        DBCore.getASyncDaoSession().delete(entity);
-    }
-
-    /**
-     * 删除所有数据
-     *
-     * @param clazz 删除所有数据
-     * @param <T>   泛型，对象名即表名
-     */
-    public static <T> void deleteAll(Class<T> clazz) {
-        DBCore.getASyncDaoSession().deleteAll(clazz);
-    }
+public class DBManager {
 
 
     public static boolean query(SeriaInformation infoEntity) {
@@ -122,6 +43,11 @@ public class DBManager<T> {
                 "updatePayState(DBManager.java:123)修改成功");
     }
 
+    /**
+     * 查询最后3条数据
+     *
+     * @return .
+     */
     public static List<SeriaInformation> query() {
         SeriaInformationDao dao = DBCore.getDaoSession().getSeriaInformationDao();
         return dao.queryBuilder()
@@ -129,5 +55,44 @@ public class DBManager<T> {
                 .limit(3)
                 .list();
     }
+
+    /**
+     * 删除所有加油记录
+     */
+    public static void deleteAll() {
+        AsyncSession session = new AsyncSession(DBCore.getDaoSession());
+        session.setListener(new AsyncOperationListener() {
+            @Override
+            public void onAsyncOperationCompleted(AsyncOperation operation) {
+                Tip.show(App.getInstance(), "清除成功!", true);
+            }
+        });
+        session.deleteAll(SeriaInformation.class);
+    }
+
+
+    /**
+     * 更新员工信息
+     *
+     * @param entity .
+     */
+    public static void updateEmp(final List<EmpEntity> entity) {
+        EmpEntityDao dao = DBCore.getDaoSession().getEmpEntityDao();
+        dao.deleteAll();
+        dao.insertOrReplaceInTx(entity);
+    }
+
+    /**
+     * 检查是否是员工卡
+     *
+     * @param information
+     * @return
+     */
+    public static boolean checkEmpNo(SeriaInformation information) {
+        EmpEntityDao dao = DBCore.getDaoSession().getEmpEntityDao();
+        EmpEntity unique = dao.queryBuilder().where(EmpEntityDao.Properties.EmpNo.eq(information.getLogicalCardNo())).build().unique();
+        return unique != null;
+    }
+
 
 }

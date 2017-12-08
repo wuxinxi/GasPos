@@ -21,7 +21,6 @@ public class UnpackUtil {
 
     public static SeriaInformation unpack(byte[] recv) {
         try {
-
             SeriaInformation seriaInformation = new SeriaInformation();
             //油枪号
             byte[] gasNo_bytes = new byte[1];
@@ -125,7 +124,7 @@ public class UnpackUtil {
             byte[] g_code = new byte[2];
             System.arraycopy(recv, 51, g_code, 0, 2);
             seriaInformation.setOilCode(TrankerInterface.getResult2String(g_code));
-            Logger.d("油品编码:" + TrankerInterface.getResult2String(g_code));
+            Logger.d("油品编码:" + bcd2Str(g_code));
 
             //加油升数
             byte[] gasCapacity_bytes = new byte[3];

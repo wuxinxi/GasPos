@@ -130,8 +130,7 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
 
         gasPrice.setText("单价:" + Util.getMoney(infoEntity.getPrices()));
         gasTotal.setText("总价:" + Util.getMoney(infoEntity.getGasMoney()));
-        Log.d("OrderZipActivity",
-                "initData(OrderZipActivity.java:131)" + infoEntity.getMemnerNo());
+
         if (status.equals("0")) {
             vipgasPrice.setVisibility(View.VISIBLE);
             vipgasPrice.setText("会员单价:" + Util.getMoney(infoEntity.getMemberPrices()));
@@ -162,21 +161,22 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
         map.put("paytype", paytype);//0-现金 1-微信 2-支付宝 3-ic卡 4-银行卡
         map.put("devno", App.getPosManager().getDevice());
         map.put("memno", infoEntity.getMemnerNo());//会员卡号,如果不是会员传1
-        map.put("member_status", status);//会员0,不是会员传1
+        map.put("member_status", status);//会员0,非会员传1
         map.put("mchid", App.getPosManager().getMchID());
         map.put("mername", App.getPosManager().getOrderDec());
         map.put("goodname", infoEntity.getOilCode());//油品名称
-        map.put("goodcode", "0092");//商品代码,线上使用infoEntity.getOilCode()
-        map.put("qty", "1");//加油升数,infoEntity.getFuelingUp()
-        map.put("total_fee", "1");//总金额
-        if (status.equals("1"))
-            map.put("amount", "1");//实际扣款
+        map.put("goodcode", infoEntity.getOilCode());//商品代码,线上使用infoEntity.getOilCode()
+        map.put("qty", infoEntity.getFuelingUp());//加油升数,infoEntity.getFuelingUp()
+        map.put("total_fee", infoEntity.getGasMoney());//总金额infoEntity.getGasMoney()
+        if (status.equals("1")) {
+            map.put("amount", infoEntity.getGasMoney());//实际扣款
+        }
         map.put("trantime", DateUtil.getCurrentDate());//订单时间
         map.put("saletime", DateUtil.getCurrentDate());//销售时间
-        map.put("class", "0001");//班次
+        map.put("class", infoEntity.getLogicalCardNo());//班次
         map.put("operaterno", App.getPosManager().getUserNo());//操作员编号
-        map.put("salerno", "00001");//销售员编号
-        map.put("mchineno", "00002");//加油机号
+        map.put("salerno", App.getPosManager().getUserNo());//销售员编号
+        map.put("mchineno", infoEntity.getRemark_1());//加油机号
         map.put("gmchineno", infoEntity.getGasNo());//加油枪号
         map.put("rmk", "无");//备注
         return map;
@@ -211,6 +211,7 @@ public class OrderZipActivity extends BaseMvpActivity<TransactionPresenter> impl
     }
 
     //现金交易
+
     private void cashPay() {
         if (checkCurrent()) return;
         title.setText("订单页-现金");
